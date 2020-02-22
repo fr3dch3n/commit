@@ -95,7 +95,10 @@ To execute all tests, simply run: `make test`.
 * [logrus](github.com/sirupsen/logrus) - The golang logging framework
 
 ## Further Todos
+- [ ] save "none" as pair
+- [ ] summary is mandatory
 - [ ] make `commit` a cmd-line-tool
+- [ ] add `create-commit` cmd
 - [ ] add `create-config` cmd
 - [ ] add `create-aliases` cmd
 - [ ] add travis
