@@ -33,6 +33,19 @@ func TestBuildCommitMsg(t *testing.T) {
 			},
 			want: "[ABC-001] me|un I commit things\n\nBecause I can\nAnd I Like it\n\n\nCo-authored-by: pair <pair@mail.com>\n",
 		},
+		{
+			name: "simple commit without pair",
+			args: args{
+				story: "ABC-001",
+				pair: input.TeamMember{
+					Short: "none",
+				},
+				summary:     "I commit things",
+				explanation: "Because I can\nAnd I Like it",
+				short:       "me",
+			},
+			want: "[ABC-001] me I commit things\n\nBecause I can\nAnd I Like it\n",
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

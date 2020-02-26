@@ -12,21 +12,21 @@ func BuildCommitMsg(story string, pair input.TeamMember, summary string, explana
 
 	output += fmt.Sprintf("[%s] ", story)
 
-	if (input.TeamMember{}) == pair {
+	if (input.TeamMember{}) == pair || pair.Short == "none" {
 		output += fmt.Sprintf("%s ", short)
 	} else {
 		output += fmt.Sprintf("%s|%s ", short, pair.Short)
 	}
 
-	output += fmt.Sprintf("%s", summary)
+	output += fmt.Sprintf("%s\n", summary)
 
 	if strings.TrimSpace(explanation) != "" {
-		output += fmt.Sprintf("\n\n%s", explanation)
+		output += fmt.Sprintf("\n%s\n", explanation)
 	}
 
-	if (input.TeamMember{}) != pair {
+	if (input.TeamMember{}) != pair && pair.Short != "none" {
 		coAuthoredBy := fmt.Sprintf("Co-authored-by: %s <%s>\n", pair.GithubUserName, pair.Email)
-		output += fmt.Sprintf("\n\n\n%s", coAuthoredBy)
+		output += fmt.Sprintf("\n\n%s", coAuthoredBy)
 	}
 
 	return output

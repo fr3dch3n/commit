@@ -14,7 +14,7 @@ func GetPair(commitConfig input.CommitConfig, teamMembers []input.TeamMember) (i
 	}
 	log.Debug("PairShort: " + pairShort)
 	if pairShort == "none" {
-		return input.TeamMember{}, nil
+		return input.TeamMember{Short: "none"}, nil
 	}
 	for _, tm := range teamMembers {
 		if tm.Short == pairShort {
