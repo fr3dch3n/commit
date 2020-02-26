@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"github.com/fr3dch3n/commit/git"
 	"github.com/fr3dch3n/commit/input"
 	"github.com/fr3dch3n/commit/utils"
@@ -57,12 +56,12 @@ func main() {
 	reviewedSummary := git.ReviewSummary(summary)
 	log.Debug("ReviewedSummary: " + reviewedSummary)
 
-	explanation, err := input.GetMultiLineInput(os.Stdin, "Why did you choose to do that?")
+	explanation, err := input.GetMultiLineInput(os.Stdin, "Why did you choose to do that? ")
 	utils.Check(err)
 	log.Debug("Explanation: " + explanation)
 
 	commitMsg := git.BuildCommitMsg(story, pair, reviewedSummary, explanation, commitConfig.Short)
 	log.Debug("CommitMsg: " + commitMsg)
 
-	fmt.Println(commitMsg)
+	git.Commit(commitMsg)
 }

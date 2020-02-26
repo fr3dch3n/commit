@@ -31,7 +31,7 @@ func TestBuildCommitMsg(t *testing.T) {
 				explanation: "Because I can\nAnd I Like it",
 				short:       "me",
 			},
-			want: "[ABC-001] me|un I commit things\n\nBecause I can\nAnd I Like it\n\nCo-authored-by: pair <pair@mail.com>\n",
+			want: "[ABC-001] me|un I commit things\n\nBecause I can\nAnd I Like it\n\n\nCo-authored-by: pair <pair@mail.com>\n",
 		},
 	}
 	for _, tt := range tests {

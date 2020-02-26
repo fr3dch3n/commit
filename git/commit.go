@@ -3,6 +3,7 @@ package git
 import (
 	"fmt"
 	"github.com/fr3dch3n/commit/input"
+	"os/exec"
 	"strings"
 )
 
@@ -25,7 +26,7 @@ func BuildCommitMsg(story string, pair input.TeamMember, summary string, explana
 
 	if (input.TeamMember{}) != pair {
 		coAuthoredBy := fmt.Sprintf("Co-authored-by: %s <%s>\n", pair.GithubUserName, pair.Email)
-		output += fmt.Sprintf("\n\n%s", coAuthoredBy)
+		output += fmt.Sprintf("\n\n\n%s", coAuthoredBy)
 	}
 
 	return output
@@ -35,4 +36,14 @@ func ReviewSummary(summary string) string {
 	cleanedOfWhitespace := strings.TrimSpace(summary)
 	firstChar := string(cleanedOfWhitespace[0])
 	return strings.ToUpper(firstChar) + strings.TrimPrefix(cleanedOfWhitespace, firstChar)
+}
+
+func Commit(commitMsg string) {
+	out, err := exec.Command("git", "commit", "-m", commitMsg).Output()
+	if err != nil {
+		fmt.Printf("%s", err)
+	}
+	fmt.Println("Command Successfully Executed")
+	output := string(out[:])
+	fmt.Println(output)
 }
