@@ -25,7 +25,7 @@ func Test_ReadCommitConfig(t *testing.T) {
 			},
 			want: CommitConfig{
 				TeamMembersConfigPath: "path",
-				Short:                 "abc",
+				Abbreviation:          "abc",
 			},
 			wantErr: false,
 		},
@@ -81,17 +81,17 @@ func Test_ContainsMinimalSet(t *testing.T) {
 			name: "empty config",
 			args: args{
 				c: CommitConfig{
-					Short:                 "",
+					Abbreviation:          "",
 					TeamMembersConfigPath: "",
 				},
 			},
 			wantErr: true,
 		},
 		{
-			name: "only short is missing",
+			name: "only abbreviation is missing",
 			args: args{
 				c: CommitConfig{
-					Short:                 "",
+					Abbreviation:          "",
 					TeamMembersConfigPath: "/some/path",
 				},
 			},
@@ -101,7 +101,7 @@ func Test_ContainsMinimalSet(t *testing.T) {
 			name: "only config-path is missing",
 			args: args{
 				c: CommitConfig{
-					Short:                 "me",
+					Abbreviation:          "me",
 					TeamMembersConfigPath: "",
 				},
 			},
@@ -111,7 +111,7 @@ func Test_ContainsMinimalSet(t *testing.T) {
 			name: "full config",
 			args: args{
 				c: CommitConfig{
-					Short:                 "me",
+					Abbreviation:          "me",
 					TeamMembersConfigPath: "/some/path",
 				},
 			},
@@ -146,11 +146,11 @@ func Test_WriteCommitConfig(t *testing.T) {
 				pair: TeamMember{
 					GithubUserName: "member1",
 					Email:          "member1@company.com",
-					Short:          "m1",
+					Abbreviation:   "m1",
 				},
 				story: "TR-410",
 				oldConfig: CommitConfig{
-					Short:                 "me",
+					Abbreviation:          "me",
 					TeamMembersConfigPath: "test-resources/commit-config/no-longer-existent-config.json",
 				},
 			},
@@ -167,7 +167,7 @@ func Test_WriteCommitConfig(t *testing.T) {
 			if err != nil {
 				t.Errorf("ReadCommitConfig() error = %v, wantErr %v", err, tt.wantErr)
 			}
-			assert.Equal(t, tt.args.oldConfig.Short, config.Short)
+			assert.Equal(t, tt.args.oldConfig.Abbreviation, config.Abbreviation)
 			assert.Equal(t, tt.args.oldConfig.TeamMembersConfigPath, config.TeamMembersConfigPath)
 			_ = os.Remove(file.Name())
 		})

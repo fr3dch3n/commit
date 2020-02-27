@@ -9,11 +9,11 @@ import (
 type TeamMember struct {
 	GithubUserName string `json:"username"`
 	Email          string `json:"mail"`
-	Short          string `json:"short"`
+	Abbreviation   string `json:"abbreviation"`
 }
 
 func (tm TeamMember) String() string {
-	return fmt.Sprintf("GithubUsername:%s, Email:%s, Short: %s", tm.GithubUserName, tm.Email, tm.Short)
+	return fmt.Sprintf("GithubUsername:%s, Email:%s, Abbreviation: %s", tm.GithubUserName, tm.Email, tm.Abbreviation)
 }
 
 func ReadTeamMembersConfig(path string) ([]TeamMember, error) {

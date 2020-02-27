@@ -27,12 +27,12 @@ func Test_ReadTeamMembersConfig(t *testing.T) {
 				{
 					GithubUserName: "member1",
 					Email:          "member1@company.com",
-					Short:          "m1",
+					Abbreviation:   "m1",
 				},
 				{
 					GithubUserName: "member2",
 					Email:          "member2@company.com",
-					Short:          "m2",
+					Abbreviation:   "m2",
 				},
 			},
 			wantErr: false,
@@ -102,12 +102,12 @@ func Test_WriteTeamMembersConfig(t *testing.T) {
 					{
 						GithubUserName: "member1",
 						Email:          "m1@company.com",
-						Short:          "m1",
+						Abbreviation:   "m1",
 					},
 					{
 						GithubUserName: "member2",
 						Email:          "m2@company.com",
-						Short:          "m2",
+						Abbreviation:   "m2",
 					},
 				},
 			},

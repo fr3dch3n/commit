@@ -10,7 +10,6 @@ type State struct {
 	CurrentPair  string `json:"pair"`
 }
 
-
 func ReadState(path string) (State, error) {
 	file, err := ioutil.ReadFile(path)
 	if err != nil {
@@ -27,7 +26,7 @@ func ReadState(path string) (State, error) {
 func WriteState(path string, pair TeamMember, story string) error {
 	newState := State{
 		CurrentStory: story,
-		CurrentPair:  pair.Short,
+		CurrentPair:  pair.Abbreviation,
 	}
 	b, err := json.MarshalIndent(newState, "", "	")
 	if err != nil {
@@ -36,4 +35,3 @@ func WriteState(path string, pair TeamMember, story string) error {
 	err = ioutil.WriteFile(path, b, 0644)
 	return err
 }
-

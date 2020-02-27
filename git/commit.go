@@ -9,20 +9,20 @@ import (
 	"strings"
 )
 
-func BuildCommitMsg(story string, pair input.TeamMember, summary string, explanation string, me input.TeamMember, skipShort bool) string {
+func BuildCommitMsg(story string, pair input.TeamMember, summary string, explanation string, me input.TeamMember, skipAbbreviation bool) string {
 	log.Debug("story: " + story)
-	log.Debug("pair: " + pair.Short)
+	log.Debug("pair: " + pair.Abbreviation)
 	var output string
 
 	if story != "" {
 		output += fmt.Sprintf("[%s] ", story)
 	}
 
-	if !skipShort {
-		if (input.TeamMember{}) == pair || pair.Short == "none" {
-			output += fmt.Sprintf("%s ", me.Short)
+	if !skipAbbreviation {
+		if (input.TeamMember{}) == pair || pair.Abbreviation == "none" {
+			output += fmt.Sprintf("%s ", me.Abbreviation)
 		} else {
-			output += fmt.Sprintf("%s|%s ", pair.Short, me.Short)
+			output += fmt.Sprintf("%s|%s ", pair.Abbreviation, me.Abbreviation)
 		}
 	}
 
@@ -32,7 +32,7 @@ func BuildCommitMsg(story string, pair input.TeamMember, summary string, explana
 		output += fmt.Sprintf("\n%s\n", explanation)
 	}
 
-	if (input.TeamMember{}) != pair && pair.Short != "none" {
+	if (input.TeamMember{}) != pair && pair.Abbreviation != "none" {
 		coAuthoredBy := fmt.Sprintf("Co-authored-by: %s <%s>\n", pair.GithubUserName, pair.Email)
 		output += fmt.Sprintf("\n\n%s", coAuthoredBy)
 	}

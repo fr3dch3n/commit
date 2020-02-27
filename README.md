@@ -65,7 +65,7 @@ You need a basic configuration file in `~/.commit-config`:
     "username": "my_github_username",
     "story": "",
     "pair": "",
-    "short": "my short name",
+    "abbreviation": "my abbreviation name",
     "teamMembersConfigPath": "~/my-team/team-members.json"
 }
 ```
@@ -76,12 +76,12 @@ And a team-members configuration file in the path specified above:
     {
         "username": "another_username",
         "mail": "user1@company.com",
-        "short": "user1"
+        "abbreviation": "user1"
     },
     {
         "username": "another_username2",
         "mail": "user2@company.com",
-        "short": "user2"
+        "abbreviation": "user2"
     }
 ]
 ```
@@ -104,9 +104,10 @@ To execute all tests, simply run: `make test`.
 - [x] add flag to skip long explanation
 - [x] check if there is anything to commit
 - [x] separate state from config
-- [ ] use abbreviation
-- [ ] personal infos from team-config
+- [x] use abbreviation
+- [x] personal infos from team-config
 - [ ] -y for yes to all git diffs and take default parameter
+- [ ] initial config setup
 
 ## License
 

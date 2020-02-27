@@ -77,6 +77,6 @@ func GetNewTeamMemberFromInput(ioreader io.Reader, abbreviation string) (TeamMem
 	return TeamMember{
 		GithubUserName: username,
 		Email:          mail,
-		Short:          abbreviation,
+		Abbreviation:   abbreviation,
 	}, nil
 }

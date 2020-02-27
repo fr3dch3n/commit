@@ -8,12 +8,12 @@ import (
 )
 
 type CommitConfig struct {
-	Short                 string `json:"short"`
+	Abbreviation          string `json:"abbreviation"`
 	TeamMembersConfigPath string `json:"teamMembersConfigPath"`
 }
 
 func (c CommitConfig) String() string {
-	return fmt.Sprintf("Short: %s, TeamMembersConfigPath: %s", c.Short, c.TeamMembersConfigPath)
+	return fmt.Sprintf("Abbreviation: %s, TeamMembersConfigPath: %s", c.Abbreviation, c.TeamMembersConfigPath)
 }
 
 func ReadCommitConfig(path string) (CommitConfig, error) {
@@ -30,8 +30,8 @@ func ReadCommitConfig(path string) (CommitConfig, error) {
 }
 
 func ContainsMinimalSet(c CommitConfig) error {
-	if c.Short == "" {
-		return errors.New("your short-name is not specified")
+	if c.Abbreviation == "" {
+		return errors.New("your abbreviation-name is not specified")
 	} else if c.TeamMembersConfigPath == "" {
 		return errors.New("the teamMembersConfigPath is not specified")
 	}
@@ -40,7 +40,7 @@ func ContainsMinimalSet(c CommitConfig) error {
 
 func WriteCommitConfig(path string, oldConfig CommitConfig) error {
 	newConfig := CommitConfig{
-		Short:                 oldConfig.Short,
+		Abbreviation:          oldConfig.Abbreviation,
 		TeamMembersConfigPath: oldConfig.TeamMembersConfigPath,
 	}
 	b, err := json.MarshalIndent(newConfig, "", "	")

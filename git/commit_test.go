@@ -7,11 +7,11 @@ import (
 
 func TestBuildCommitMsg(t *testing.T) {
 	type args struct {
-		story       string
-		pair        input.TeamMember
-		summary     string
-		explanation string
-		short       input.TeamMember
+		story        string
+		pair         input.TeamMember
+		summary      string
+		explanation  string
+		abbreviation input.TeamMember
 	}
 	tests := []struct {
 		name string
@@ -25,14 +25,14 @@ func TestBuildCommitMsg(t *testing.T) {
 				pair: input.TeamMember{
 					GithubUserName: "pair",
 					Email:          "pair@mail.com",
-					Short:          "un",
+					Abbreviation:   "un",
 				},
 				summary:     "I commit things",
 				explanation: "Because I can\nAnd I Like it",
-				short:       input.TeamMember{
+				abbreviation: input.TeamMember{
 					GithubUserName: "myself",
 					Email:          "me@company.com",
-					Short:          "me",
+					Abbreviation:   "me",
 				},
 			},
 			want: "[ABC-001] un|me I commit things\n\nBecause I can\nAnd I Like it\n\n\nCo-authored-by: pair <pair@mail.com>\n",
@@ -42,14 +42,14 @@ func TestBuildCommitMsg(t *testing.T) {
 			args: args{
 				story: "ABC-001",
 				pair: input.TeamMember{
-					Short: "none",
+					Abbreviation: "none",
 				},
 				summary:     "I commit things",
 				explanation: "Because I can\nAnd I Like it",
-				short:       input.TeamMember{
+				abbreviation: input.TeamMember{
 					GithubUserName: "myself",
 					Email:          "me@company.com",
-					Short:          "me",
+					Abbreviation:   "me",
 				},
 			},
 			want: "[ABC-001] me I commit things\n\nBecause I can\nAnd I Like it\n",
@@ -57,7 +57,7 @@ func TestBuildCommitMsg(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := BuildCommitMsg(tt.args.story, tt.args.pair, tt.args.summary, tt.args.explanation, tt.args.short, false); got != tt.want {
+			if got := BuildCommitMsg(tt.args.story, tt.args.pair, tt.args.summary, tt.args.explanation, tt.args.abbreviation, false); got != tt.want {
 				t.Errorf("BuildCommitMsg() = %v, want %v", got, tt.want)
 			}
 		})
