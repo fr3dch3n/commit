@@ -81,13 +81,13 @@ func commit() {
 
 	var pair input.TeamMember
 	if !SkipPair {
-		pair, err := git.GetPair(commitConfig, teamMembers)
+		pair, err = git.GetPair(commitConfig, teamMembers)
 		utils.Check(err)
 		log.Debug("Pair: " + pair.String())
 	}
 	var story string
 	if !SkipStory {
-		story, err := input.GetInputOrElse(os.Stdin, "Story", commitConfig.CurrentStory)
+		story, err = input.GetInputOrElse(os.Stdin, "Story", commitConfig.CurrentStory)
 		utils.Check(err)
 		log.Debug("Story: " + story)
 	}
@@ -102,7 +102,7 @@ func commit() {
 
 	var explanation string
 	if !SkipExplanation {
-		explanation, err := input.GetMultiLineInput(os.Stdin, "Why did you choose to do that? ")
+		explanation, err = input.GetMultiLineInput(os.Stdin, "Why did you choose to do that? ")
 		utils.Check(err)
 		log.Debug("Explanation: " + explanation)
 	}

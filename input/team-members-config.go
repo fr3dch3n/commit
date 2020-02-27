@@ -13,7 +13,7 @@ type TeamMember struct {
 }
 
 func (tm TeamMember) String() string {
-	return fmt.Sprintf("GithubUsername:%s, Email:%s, Short: %s", tm.GithubUserName, tm.Email, tm.Email)
+	return fmt.Sprintf("GithubUsername:%s, Email:%s, Short: %s", tm.GithubUserName, tm.Email, tm.Short)
 }
 
 func ReadTeamMembersConfig(path string) ([]TeamMember, error) {

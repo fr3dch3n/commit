@@ -3,12 +3,15 @@ package git
 import (
 	"fmt"
 	"github.com/fr3dch3n/commit/input"
+	log "github.com/sirupsen/logrus"
 	"os"
 	"os/exec"
 	"strings"
 )
 
 func BuildCommitMsg(story string, pair input.TeamMember, summary string, explanation string, short string, skipShort bool) string {
+	log.Debug("story: " + story)
+	log.Debug("pair: " + pair.Short)
 	var output string
 
 	if story != "" {
@@ -19,7 +22,7 @@ func BuildCommitMsg(story string, pair input.TeamMember, summary string, explana
 		if (input.TeamMember{}) == pair || pair.Short == "none" {
 			output += fmt.Sprintf("%s ", short)
 		} else {
-			output += fmt.Sprintf("%s|%s ", short, pair.Short)
+			output += fmt.Sprintf("%s|%s ", short, pair.Short) // TODO the other way around
 		}
 	}
 
