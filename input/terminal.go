@@ -26,7 +26,7 @@ func GetInputOrElse(ioreader io.Reader, msg string, current string) (string, err
 	}
 }
 
-func GetInput(ioreader io.Reader, msg string) (string, error) {
+func GetNonEmptyInput(ioreader io.Reader, msg string) (string, error) {
 	var err error
 	var input string
 	reader := bufio.NewReader(ioreader)
@@ -35,7 +35,11 @@ func GetInput(ioreader io.Reader, msg string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return strings.TrimSpace(input), nil
+	cleanedInput := strings.TrimSpace(input)
+	if cleanedInput == "" {
+		return GetNonEmptyInput(ioreader, msg)
+	}
+	return cleanedInput, nil
 }
 
 func GetMultiLineInput(ioreader io.Reader, msg string) (string, error) {
@@ -61,15 +65,15 @@ func GetMultiLineInput(ioreader io.Reader, msg string) (string, error) {
 
 func GetNewTeamMemberFromInput(ioreader io.Reader) (TeamMember, error) {
 	fmt.Println("Specifying new team member")
-	short, err := GetInput(ioreader, "Enter short")
+	short, err := GetNonEmptyInput(ioreader, "Enter short")
 	if err != nil {
 		return TeamMember{}, nil
 	}
-	username, err := GetInput(ioreader, "Enter username")
+	username, err := GetNonEmptyInput(ioreader, "Enter username")
 	if err != nil {
 		return TeamMember{}, nil
 	}
-	mail, err := GetInput(ioreader, "Enter mail")
+	mail, err := GetNonEmptyInput(ioreader, "Enter mail")
 	if err != nil {
 		return TeamMember{}, nil
 	}

@@ -96,7 +96,7 @@ To execute all tests, simply run: `make test`.
 
 ## Further Todos
 - [x] save "none" as pair
-- [ ] summary is mandatory
+- [x] summary is mandatory
 - [ ] make `commit` a cmd-line-tool
 - [ ] add `create-commit` cmd
 - [ ] add `create-config` cmd

@@ -50,7 +50,7 @@ func main() {
 	err = input.WriteCommitConfig(configPath, pair, story, commitConfig)
 	utils.Check(err)
 
-	summary, err := input.GetInput(os.Stdin, "Summary of your commit")
+	summary, err := input.GetNonEmptyInput(os.Stdin, "Summary of your commit")
 	utils.Check(err)
 	log.Debug("Summary: " + summary)
 	reviewedSummary := git.ReviewSummary(summary)
