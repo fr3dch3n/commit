@@ -3,6 +3,7 @@ package git
 import (
 	"fmt"
 	"github.com/fr3dch3n/commit/input"
+	"os"
 	"os/exec"
 	"strings"
 )
@@ -10,8 +11,9 @@ import (
 func BuildCommitMsg(story string, pair input.TeamMember, summary string, explanation string, short string) string {
 	var output string
 
-	output += fmt.Sprintf("[%s] ", story)
-
+	if story != "" {
+		output += fmt.Sprintf("[%s] ", story)
+	}
 	if (input.TeamMember{}) == pair || pair.Short == "none" {
 		output += fmt.Sprintf("%s ", short)
 	} else {
@@ -46,4 +48,13 @@ func Commit(commitMsg string) {
 	fmt.Println("Command Successfully Executed")
 	output := string(out[:])
 	fmt.Println(output)
+}
+
+func AddP() {
+	cmd := exec.Command("git", "add", "-p")
+	cmd.Stdout = os.Stdout
+	cmd.Stdin = os.Stdin
+	cmd.Stderr = os.Stderr
+	_ = cmd.Run()
+	fmt.Println("Command Successfully Executed")
 }

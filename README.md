@@ -98,10 +98,10 @@ To execute all tests, simply run: `make test`.
 - [x] save "none" as pair
 - [x] summary is mandatory
 - [x] make `commit` a cmd-line-tool
-- [ ] add flag to run git add -p beforehand
-- [ ] add flag to skip story
-- [ ] add flag to skip pair
-- [ ] add flag to skip long explanation
+- [x] add flag to run git add -p beforehand
+- [x] add flag to skip story
+- [x] add flag to skip pair
+- [x] add flag to skip long explanation
 
 ## License
 

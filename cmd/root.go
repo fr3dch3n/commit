@@ -11,9 +11,17 @@ import (
 import "github.com/spf13/cobra"
 
 var Verbose bool
+var GitAddP bool
+var SkipStory bool
+var SkipPair bool
+var SkipExplanation bool
 
 func init() {
 	rootCmd.PersistentFlags().BoolVarP(&Verbose, "verbose", "v", false, "verbose output")
+	rootCmd.PersistentFlags().BoolVarP(&GitAddP, "git-add", "a", false, "run git add -p beforehand")
+	rootCmd.PersistentFlags().BoolVarP(&SkipStory, "skip-story", "s", false, "skip story integration")
+	rootCmd.PersistentFlags().BoolVarP(&SkipPair, "skip-pair", "p", false, "skip pair integration")
+	rootCmd.PersistentFlags().BoolVarP(&SkipExplanation, "skip-explanation", "e", false, "skip long explanation")
 }
 
 var rootCmd = &cobra.Command{
@@ -60,14 +68,22 @@ func commit() {
 
 	log.Debug("GithubUsername: " + commitConfig.GithubUsername)
 
-	pair, err := git.GetPair(commitConfig, teamMembers)
-	utils.Check(err)
-	log.Debug("Pair: " + pair.String())
+	if GitAddP {
+		git.AddP()
+	}
 
-	story, err := input.GetInputOrElse(os.Stdin, "Story", commitConfig.CurrentStory)
-	utils.Check(err)
-	log.Debug("Story: " + story)
-
+	var pair input.TeamMember
+	if !SkipPair {
+		pair, err := git.GetPair(commitConfig, teamMembers)
+		utils.Check(err)
+		log.Debug("Pair: " + pair.String())
+	}
+	var story string
+	if !SkipStory {
+		story, err := input.GetInputOrElse(os.Stdin, "Story", commitConfig.CurrentStory)
+		utils.Check(err)
+		log.Debug("Story: " + story)
+	}
 	err = input.WriteCommitConfig(configPath, pair, story, commitConfig)
 	utils.Check(err)
 
@@ -77,10 +93,12 @@ func commit() {
 	reviewedSummary := git.ReviewSummary(summary)
 	log.Debug("ReviewedSummary: " + reviewedSummary)
 
-	explanation, err := input.GetMultiLineInput(os.Stdin, "Why did you choose to do that? ")
-	utils.Check(err)
-	log.Debug("Explanation: " + explanation)
-
+	var explanation string
+	if !SkipExplanation {
+		explanation, err := input.GetMultiLineInput(os.Stdin, "Why did you choose to do that? ")
+		utils.Check(err)
+		log.Debug("Explanation: " + explanation)
+	}
 	commitMsg := git.BuildCommitMsg(story, pair, reviewedSummary, explanation, commitConfig.Short)
 	log.Debug("CommitMsg: " + commitMsg)
 
