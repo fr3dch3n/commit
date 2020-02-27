@@ -49,7 +49,7 @@ func TestBuildCommitMsg(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := BuildCommitMsg(tt.args.story, tt.args.pair, tt.args.summary, tt.args.explanation, tt.args.short); got != tt.want {
+			if got := BuildCommitMsg(tt.args.story, tt.args.pair, tt.args.summary, tt.args.explanation, tt.args.short, false); got != tt.want {
 				t.Errorf("BuildCommitMsg() = %v, want %v", got, tt.want)
 			}
 		})

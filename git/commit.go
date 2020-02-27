@@ -8,16 +8,19 @@ import (
 	"strings"
 )
 
-func BuildCommitMsg(story string, pair input.TeamMember, summary string, explanation string, short string) string {
+func BuildCommitMsg(story string, pair input.TeamMember, summary string, explanation string, short string, skipShort bool) string {
 	var output string
 
 	if story != "" {
 		output += fmt.Sprintf("[%s] ", story)
 	}
-	if (input.TeamMember{}) == pair || pair.Short == "none" {
-		output += fmt.Sprintf("%s ", short)
-	} else {
-		output += fmt.Sprintf("%s|%s ", short, pair.Short)
+
+	if !skipShort {
+		if (input.TeamMember{}) == pair || pair.Short == "none" {
+			output += fmt.Sprintf("%s ", short)
+		} else {
+			output += fmt.Sprintf("%s|%s ", short, pair.Short)
+		}
 	}
 
 	output += fmt.Sprintf("%s\n", summary)

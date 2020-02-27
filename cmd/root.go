@@ -15,6 +15,7 @@ var GitAddP bool
 var SkipStory bool
 var SkipPair bool
 var SkipExplanation bool
+var SkipShorts bool
 
 func init() {
 	rootCmd.PersistentFlags().BoolVarP(&Verbose, "verbose", "v", false, "verbose output")
@@ -22,6 +23,7 @@ func init() {
 	rootCmd.PersistentFlags().BoolVarP(&SkipStory, "skip-story", "s", false, "skip story integration")
 	rootCmd.PersistentFlags().BoolVarP(&SkipPair, "skip-pair", "p", false, "skip pair integration")
 	rootCmd.PersistentFlags().BoolVarP(&SkipExplanation, "skip-explanation", "e", false, "skip long explanation")
+	rootCmd.PersistentFlags().BoolVarP(&SkipShorts, "skip-shorts", "n", false, "skip listing shorts")
 }
 
 var rootCmd = &cobra.Command{
@@ -99,7 +101,7 @@ func commit() {
 		utils.Check(err)
 		log.Debug("Explanation: " + explanation)
 	}
-	commitMsg := git.BuildCommitMsg(story, pair, reviewedSummary, explanation, commitConfig.Short)
+	commitMsg := git.BuildCommitMsg(story, pair, reviewedSummary, explanation, commitConfig.Short, SkipShorts)
 	log.Debug("CommitMsg: " + commitMsg)
 
 	git.Commit(commitMsg)
