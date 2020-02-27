@@ -11,11 +11,11 @@ func GetInputOrElse(ioreader io.Reader, msg string, current string) (string, err
 	var input string
 	if current != "" {
 		reader := bufio.NewReader(ioreader)
-		fmt.Print(msg + " (" + current + "): ")
+		fmt.Print(msg + " [" + current + "]: ")
 		input, _ = reader.ReadString('\n')
 	} else {
 		reader := bufio.NewReader(ioreader)
-		fmt.Print(msg + ":")
+		fmt.Print(msg + ": ")
 		input, _ = reader.ReadString('\n')
 	}
 	cleanInput := strings.TrimSpace(input)

@@ -9,14 +9,12 @@ import (
 
 type CommitConfig struct {
 	GithubUsername        string `json:"username"`
-	CurrentStory          string `json:"story"`
-	CurrentPair           string `json:"pair"`
 	Short                 string `json:"short"`
 	TeamMembersConfigPath string `json:"teamMembersConfigPath"`
 }
 
 func (c CommitConfig) String() string {
-	return fmt.Sprintf("GithubUsername:%s, Story:%s, Pair: %s, Short: %s, TeamMembersConfigPath: %s", c.GithubUsername, c.CurrentStory, c.CurrentPair, c.Short, c.TeamMembersConfigPath)
+	return fmt.Sprintf("GithubUsername:%s, Short: %s, TeamMembersConfigPath: %s", c.GithubUsername, c.Short, c.TeamMembersConfigPath)
 }
 
 func ReadCommitConfig(path string) (CommitConfig, error) {
@@ -47,8 +45,6 @@ func WriteCommitConfig(path string, pair TeamMember, story string, oldConfig Com
 	newConfig := CommitConfig{
 		Short:                 oldConfig.Short,
 		GithubUsername:        oldConfig.GithubUsername,
-		CurrentStory:          story,
-		CurrentPair:           pair.Short,
 		TeamMembersConfigPath: oldConfig.TeamMembersConfigPath,
 	}
 	b, err := json.MarshalIndent(newConfig, "", "	")

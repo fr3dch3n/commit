@@ -41,7 +41,8 @@ func Execute() {
 	}
 }
 
-const CommitConfigPath = "/.commit-config"
+const CommitConfigPath = ".commit-config"
+const StatePath = ".commit-config.state"
 
 func commit() {
 	if Verbose {
@@ -59,7 +60,7 @@ func commit() {
 	}
 
 	homedir := os.Getenv("HOME")
-	configPath := homedir + CommitConfigPath
+	configPath := homedir + "/" + CommitConfigPath
 
 	commitConfig, err := input.ReadCommitConfig(configPath)
 	utils.Check(err)
@@ -73,7 +74,9 @@ func commit() {
 	utils.Check(err)
 	log.Debug(teamMembers)
 
-	log.Debug("GithubUsername: " + commitConfig.GithubUsername)
+	state, err := input.ReadState(homedir + "/" + StatePath)
+	utils.Check(err)
+	log.Debug(state)
 
 	if GitAddP {
 		git.AddP()
@@ -81,17 +84,17 @@ func commit() {
 
 	var pair input.TeamMember
 	if !SkipPair {
-		pair, err = git.GetPair(commitConfig, teamMembers)
+		pair, err = git.GetPair(commitConfig, state.CurrentPair, teamMembers)
 		utils.Check(err)
 		log.Debug("Pair: " + pair.String())
 	}
 	var story string
 	if !SkipStory {
-		story, err = input.GetInputOrElse(os.Stdin, "Story", commitConfig.CurrentStory)
+		story, err = input.GetInputOrElse(os.Stdin, "Story", state.CurrentStory)
 		utils.Check(err)
 		log.Debug("Story: " + story)
 	}
-	err = input.WriteCommitConfig(configPath, pair, story, commitConfig)
+	err = input.WriteState(homedir + "/" + StatePath, pair, story)
 	utils.Check(err)
 
 	summary, err := input.GetNonEmptyInput(os.Stdin, "Summary of your commit")

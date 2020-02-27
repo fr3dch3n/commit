@@ -25,8 +25,6 @@ func Test_ReadCommitConfig(t *testing.T) {
 			},
 			want: CommitConfig{
 				GithubUsername:        "my_username",
-				CurrentStory:          "ABC-001",
-				CurrentPair:           "abc",
 				TeamMembersConfigPath: "path",
 				Short:                 "abc",
 			},
@@ -85,8 +83,6 @@ func Test_ContainsMinimalSet(t *testing.T) {
 			args: args{
 				c: CommitConfig{
 					GithubUsername:        "",
-					CurrentStory:          "",
-					CurrentPair:           "",
 					Short:                 "",
 					TeamMembersConfigPath: "",
 				},
@@ -98,8 +94,6 @@ func Test_ContainsMinimalSet(t *testing.T) {
 			args: args{
 				c: CommitConfig{
 					GithubUsername:        "",
-					CurrentStory:          "TR-410",
-					CurrentPair:           "m1",
 					Short:                 "me",
 					TeamMembersConfigPath: "/some/path",
 				},
@@ -111,8 +105,6 @@ func Test_ContainsMinimalSet(t *testing.T) {
 			args: args{
 				c: CommitConfig{
 					GithubUsername:        "username",
-					CurrentStory:          "TR-410",
-					CurrentPair:           "m1",
 					Short:                 "",
 					TeamMembersConfigPath: "/some/path",
 				},
@@ -124,8 +116,6 @@ func Test_ContainsMinimalSet(t *testing.T) {
 			args: args{
 				c: CommitConfig{
 					GithubUsername:        "username",
-					CurrentStory:          "TR-410",
-					CurrentPair:           "m1",
 					Short:                 "me",
 					TeamMembersConfigPath: "",
 				},
@@ -137,21 +127,6 @@ func Test_ContainsMinimalSet(t *testing.T) {
 			args: args{
 				c: CommitConfig{
 					GithubUsername:        "username",
-					CurrentStory:          "TR-410",
-					CurrentPair:           "m1",
-					Short:                 "me",
-					TeamMembersConfigPath: "/some/path",
-				},
-			},
-			wantErr: false,
-		},
-		{
-			name: "story is missing",
-			args: args{
-				c: CommitConfig{
-					GithubUsername:        "username",
-					CurrentStory:          "",
-					CurrentPair:           "m1",
 					Short:                 "me",
 					TeamMembersConfigPath: "/some/path",
 				},
@@ -192,8 +167,6 @@ func Test_WriteCommitConfig(t *testing.T) {
 				story: "TR-410",
 				oldConfig: CommitConfig{
 					GithubUsername:        "username",
-					CurrentStory:          "TR-409",
-					CurrentPair:           "m2",
 					Short:                 "me",
 					TeamMembersConfigPath: "test-resources/commit-config/no-longer-existent-config.json",
 				},
@@ -211,8 +184,6 @@ func Test_WriteCommitConfig(t *testing.T) {
 			if err != nil {
 				t.Errorf("ReadCommitConfig() error = %v, wantErr %v", err, tt.wantErr)
 			}
-			assert.Equal(t, tt.args.pair.Short, config.CurrentPair)
-			assert.Equal(t, tt.args.story, config.CurrentStory)
 			assert.Equal(t, tt.args.oldConfig.GithubUsername, config.GithubUsername)
 			assert.Equal(t, tt.args.oldConfig.Short, config.Short)
 			assert.Equal(t, tt.args.oldConfig.TeamMembersConfigPath, config.TeamMembersConfigPath)

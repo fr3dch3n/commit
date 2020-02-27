@@ -6,9 +6,9 @@ import (
 	"os"
 )
 
-func GetPair(commitConfig input.CommitConfig, teamMembers []input.TeamMember) (input.TeamMember, error) {
+func GetPair(commitConfig input.CommitConfig, currentPair string, teamMembers []input.TeamMember) (input.TeamMember, error) {
 	var pair input.TeamMember
-	pairShort, err := input.GetInputOrElse(os.Stdin, "Pairing with", commitConfig.CurrentPair)
+	pairShort, err := input.GetInputOrElse(os.Stdin, "Pairing with", currentPair)
 	if err != nil {
 		return input.TeamMember{}, err
 	}
