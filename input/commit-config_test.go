@@ -120,7 +120,7 @@ func Test_ContainsMinimalSet(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := ContainsMinimalSet(tt.args.c); (err != nil) != tt.wantErr {
+			if err := tt.args.c.ContainsMinimalSet(); (err != nil) != tt.wantErr {
 				t.Errorf("ContainsMinimalSet() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})

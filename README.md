@@ -57,34 +57,7 @@ make build
 ln -s $(pwd)/commit $HOME/bin/commit  # e.g.
 ```
 
-### Configuration files
-
-You need a basic configuration file in `~/.commit-config`:
-```json
-{
-    "username": "my_github_username",
-    "story": "",
-    "pair": "",
-    "abbreviation": "my abbreviation name",
-    "teamMembersConfigPath": "~/my-team/team-members.json"
-}
-```
-
-And a team-members configuration file in the path specified above:
-```json
-[
-    {
-        "username": "another_username",
-        "mail": "user1@company.com",
-        "abbreviation": "user1"
-    },
-    {
-        "username": "another_username2",
-        "mail": "user2@company.com",
-        "abbreviation": "user2"
-    }
-]
-```
+`commit` will ask you for all information it needs.
 
 ## Running the tests
 
@@ -107,7 +80,7 @@ To execute all tests, simply run: `make test`.
 - [x] use abbreviation
 - [x] personal infos from team-config
 - [ ] -y for yes to all git diffs and take default parameter
-- [ ] initial config setup
+- [x] initial config setup
 
 ## License
 

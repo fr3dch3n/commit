@@ -50,8 +50,7 @@ func commit() {
 	}
 
 	if x, _ := utils.Exists(".git"); !x {
-		log.Fatal("not in a git dir, aborting")
-		os.Exit(1)
+		panic("not in a git dir, aborting")
 	}
 
 	if !git.AreThereChanges() {
@@ -62,15 +61,11 @@ func commit() {
 	homedir := os.Getenv("HOME")
 	configPath := homedir + "/" + CommitConfigPath
 
-	commitConfig, err := input.ReadCommitConfig(configPath)
+	commitConfig, err := input.InitCommitConfig(configPath)
 	utils.Check(err)
 	log.Debug(commitConfig)
 
-	if err := input.ContainsMinimalSet(commitConfig); err != nil {
-		utils.Check(err)
-	}
-
-	teamMembers, err := input.ReadTeamMembersConfig(commitConfig.TeamMembersConfigPath)
+	teamMembers, err := input.InitTeamMembersConfig(commitConfig.TeamMembersConfigPath)
 	utils.Check(err)
 	log.Debug(teamMembers)
 
@@ -79,13 +74,11 @@ func commit() {
 	if err != nil && err.Error() == "not-found" {
 		newMember, err := git.GetAndSaveNewTeamMember(commitConfig.TeamMembersConfigPath, commitConfig.Abbreviation, teamMembers)
 		if err != nil {
-			log.Fatal(err)
-			os.Exit(1)
+			panic(err)
 		}
 		me = newMember
 	} else if err != nil {
-		log.Fatal(err)
-		os.Exit(1)
+		panic(err)
 	}
 
 	state, err := input.ReadState(homedir + "/" + StatePath)

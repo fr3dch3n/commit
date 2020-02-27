@@ -37,3 +37,16 @@ func WriteTeamMembersConfig(path string, tms []TeamMember) error {
 	err = ioutil.WriteFile(path, b, 0644)
 	return err
 }
+
+func InitTeamMembersConfig(path string) ([]TeamMember, error) {
+	var tms []TeamMember
+	tms, err  := ReadTeamMembersConfig(path)
+	if err != nil {
+		tms = []TeamMember{}
+		err = WriteTeamMembersConfig(path, tms)
+		if err != nil {
+			return tms, err
+		}
+	}
+	return tms, nil
+}
