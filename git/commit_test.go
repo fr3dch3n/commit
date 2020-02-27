@@ -13,7 +13,7 @@ func TestBuildCommitMsg(t *testing.T) {
 		explanation string
 		short       string
 	}
-	var tests = []struct {
+	tests := []struct {
 		name string
 		args args
 		want string

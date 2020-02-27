@@ -1,0 +1,12 @@
+[
+  {
+    "username": "member1",
+    "mail": "member1@company.com",
+    "short": "m1"
+  },
+  {
+    "username": "member2",
+    "mail": "member2@company.com",
+    "short": "m2"
+  }
+]
