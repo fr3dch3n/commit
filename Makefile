@@ -10,6 +10,9 @@ run: build ## Build and run binary without arguments
 	./$(binary)
 
 build: ## Build binary
+	go build -ldflags "-s -w" -o $(binary)
+
+debug-build: ## Build binary
 	go build -o $(binary)
 
 test: ## Run tests
