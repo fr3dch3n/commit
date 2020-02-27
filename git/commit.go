@@ -48,9 +48,8 @@ func Commit(commitMsg string) {
 	if err != nil {
 		fmt.Printf("%s", err)
 	}
-	fmt.Println("Command Successfully Executed")
 	output := string(out[:])
-	fmt.Println(output)
+	fmt.Print(output)
 }
 
 func AddP() {
@@ -59,5 +58,13 @@ func AddP() {
 	cmd.Stdin = os.Stdin
 	cmd.Stderr = os.Stderr
 	_ = cmd.Run()
-	fmt.Println("Command Successfully Executed")
+}
+
+func AreThereChanges() bool {
+	out, err := exec.Command("git", "status", "--porcelain").Output()
+	if err != nil {
+		fmt.Printf("%s", err)
+	}
+	output := string(out[:])
+	return output != ""
 }

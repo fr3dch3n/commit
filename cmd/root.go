@@ -53,6 +53,11 @@ func commit() {
 		os.Exit(1)
 	}
 
+	if !git.AreThereChanges() {
+		fmt.Println("No changes.")
+		os.Exit(0)
+	}
+
 	homedir := os.Getenv("HOME")
 	configPath := homedir + CommitConfigPath
 

@@ -102,6 +102,7 @@ To execute all tests, simply run: `make test`.
 - [x] add flag to skip story
 - [x] add flag to skip pair
 - [x] add flag to skip long explanation
+- [x] check if there is anything to commit
 
 ## License
 
