@@ -8,13 +8,12 @@ import (
 )
 
 type CommitConfig struct {
-	GithubUsername        string `json:"username"`
 	Short                 string `json:"short"`
 	TeamMembersConfigPath string `json:"teamMembersConfigPath"`
 }
 
 func (c CommitConfig) String() string {
-	return fmt.Sprintf("GithubUsername:%s, Short: %s, TeamMembersConfigPath: %s", c.GithubUsername, c.Short, c.TeamMembersConfigPath)
+	return fmt.Sprintf("Short: %s, TeamMembersConfigPath: %s", c.Short, c.TeamMembersConfigPath)
 }
 
 func ReadCommitConfig(path string) (CommitConfig, error) {
@@ -33,18 +32,15 @@ func ReadCommitConfig(path string) (CommitConfig, error) {
 func ContainsMinimalSet(c CommitConfig) error {
 	if c.Short == "" {
 		return errors.New("your short-name is not specified")
-	} else if c.GithubUsername == "" {
-		return errors.New("your github-username is not specified")
 	} else if c.TeamMembersConfigPath == "" {
 		return errors.New("the teamMembersConfigPath is not specified")
 	}
 	return nil
 }
 
-func WriteCommitConfig(path string, pair TeamMember, story string, oldConfig CommitConfig) error {
+func WriteCommitConfig(path string, oldConfig CommitConfig) error {
 	newConfig := CommitConfig{
 		Short:                 oldConfig.Short,
-		GithubUsername:        oldConfig.GithubUsername,
 		TeamMembersConfigPath: oldConfig.TeamMembersConfigPath,
 	}
 	b, err := json.MarshalIndent(newConfig, "", "	")

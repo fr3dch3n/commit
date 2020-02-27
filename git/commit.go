@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-func BuildCommitMsg(story string, pair input.TeamMember, summary string, explanation string, short string, skipShort bool) string {
+func BuildCommitMsg(story string, pair input.TeamMember, summary string, explanation string, me input.TeamMember, skipShort bool) string {
 	log.Debug("story: " + story)
 	log.Debug("pair: " + pair.Short)
 	var output string
@@ -20,9 +20,9 @@ func BuildCommitMsg(story string, pair input.TeamMember, summary string, explana
 
 	if !skipShort {
 		if (input.TeamMember{}) == pair || pair.Short == "none" {
-			output += fmt.Sprintf("%s ", short)
+			output += fmt.Sprintf("%s ", me.Short)
 		} else {
-			output += fmt.Sprintf("%s|%s ", short, pair.Short) // TODO the other way around
+			output += fmt.Sprintf("%s|%s ", pair.Short, me.Short)
 		}
 	}
 

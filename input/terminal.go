@@ -63,12 +63,8 @@ func GetMultiLineInput(ioreader io.Reader, msg string) (string, error) {
 	return strings.Join(lines, "\n"), nil
 }
 
-func GetNewTeamMemberFromInput(ioreader io.Reader) (TeamMember, error) {
-	fmt.Println("Specifying new team member")
-	short, err := GetNonEmptyInput(ioreader, "Enter short")
-	if err != nil {
-		return TeamMember{}, nil
-	}
+func GetNewTeamMemberFromInput(ioreader io.Reader, abbreviation string) (TeamMember, error) {
+	fmt.Println("Creating team-member with abbreviation " + abbreviation)
 	username, err := GetNonEmptyInput(ioreader, "Enter username")
 	if err != nil {
 		return TeamMember{}, nil
@@ -81,6 +77,6 @@ func GetNewTeamMemberFromInput(ioreader io.Reader) (TeamMember, error) {
 	return TeamMember{
 		GithubUserName: username,
 		Email:          mail,
-		Short:          short,
+		Short:          abbreviation,
 	}, nil
 }

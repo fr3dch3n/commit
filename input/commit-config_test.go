@@ -24,7 +24,6 @@ func Test_ReadCommitConfig(t *testing.T) {
 				path: "../test-resources/commit-config/simple-config.json",
 			},
 			want: CommitConfig{
-				GithubUsername:        "my_username",
 				TeamMembersConfigPath: "path",
 				Short:                 "abc",
 			},
@@ -82,20 +81,8 @@ func Test_ContainsMinimalSet(t *testing.T) {
 			name: "empty config",
 			args: args{
 				c: CommitConfig{
-					GithubUsername:        "",
 					Short:                 "",
 					TeamMembersConfigPath: "",
-				},
-			},
-			wantErr: true,
-		},
-		{
-			name: "only username is missing",
-			args: args{
-				c: CommitConfig{
-					GithubUsername:        "",
-					Short:                 "me",
-					TeamMembersConfigPath: "/some/path",
 				},
 			},
 			wantErr: true,
@@ -104,7 +91,6 @@ func Test_ContainsMinimalSet(t *testing.T) {
 			name: "only short is missing",
 			args: args{
 				c: CommitConfig{
-					GithubUsername:        "username",
 					Short:                 "",
 					TeamMembersConfigPath: "/some/path",
 				},
@@ -115,7 +101,6 @@ func Test_ContainsMinimalSet(t *testing.T) {
 			name: "only config-path is missing",
 			args: args{
 				c: CommitConfig{
-					GithubUsername:        "username",
 					Short:                 "me",
 					TeamMembersConfigPath: "",
 				},
@@ -126,7 +111,6 @@ func Test_ContainsMinimalSet(t *testing.T) {
 			name: "full config",
 			args: args{
 				c: CommitConfig{
-					GithubUsername:        "username",
 					Short:                 "me",
 					TeamMembersConfigPath: "/some/path",
 				},
@@ -166,7 +150,6 @@ func Test_WriteCommitConfig(t *testing.T) {
 				},
 				story: "TR-410",
 				oldConfig: CommitConfig{
-					GithubUsername:        "username",
 					Short:                 "me",
 					TeamMembersConfigPath: "test-resources/commit-config/no-longer-existent-config.json",
 				},
@@ -177,14 +160,13 @@ func Test_WriteCommitConfig(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			file, _ := ioutil.TempFile("", "tmp-commit-config-")
-			if err := WriteCommitConfig(file.Name(), tt.args.pair, tt.args.story, tt.args.oldConfig); (err != nil) != tt.wantErr {
+			if err := WriteCommitConfig(file.Name(), tt.args.oldConfig); (err != nil) != tt.wantErr {
 				t.Errorf("WriteCommitConfig() error = %v, wantErr %v", err, tt.wantErr)
 			}
 			config, err := ReadCommitConfig(file.Name())
 			if err != nil {
 				t.Errorf("ReadCommitConfig() error = %v, wantErr %v", err, tt.wantErr)
 			}
-			assert.Equal(t, tt.args.oldConfig.GithubUsername, config.GithubUsername)
 			assert.Equal(t, tt.args.oldConfig.Short, config.Short)
 			assert.Equal(t, tt.args.oldConfig.TeamMembersConfigPath, config.TeamMembersConfigPath)
 			_ = os.Remove(file.Name())

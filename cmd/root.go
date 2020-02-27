@@ -74,6 +74,20 @@ func commit() {
 	utils.Check(err)
 	log.Debug(teamMembers)
 
+	var me input.TeamMember
+	me, err = git.GetTeamMemberByAbbreviation(teamMembers, commitConfig.Short)
+	if err != nil && err.Error() == "not-found" {
+		newMember, err := git.GetAndSaveNewTeamMember(commitConfig.TeamMembersConfigPath, commitConfig.Short, teamMembers)
+		if err != nil {
+			log.Fatal(err)
+			os.Exit(1)
+		}
+		me = newMember
+	} else if err != nil {
+		log.Fatal(err)
+		os.Exit(1)
+	}
+
 	state, err := input.ReadState(homedir + "/" + StatePath)
 	utils.Check(err)
 	log.Debug(state)
@@ -109,7 +123,9 @@ func commit() {
 		utils.Check(err)
 		log.Debug("Explanation: " + explanation)
 	}
-	commitMsg := git.BuildCommitMsg(story, pair, reviewedSummary, explanation, commitConfig.Short, SkipShorts)
+
+
+	commitMsg := git.BuildCommitMsg(story, pair, reviewedSummary, explanation, me, SkipShorts)
 	log.Debug("CommitMsg: " + commitMsg)
 
 	git.Commit(commitMsg)

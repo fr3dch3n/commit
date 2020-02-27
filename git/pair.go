@@ -1,6 +1,7 @@
 package git
 
 import (
+	"errors"
 	"github.com/fr3dch3n/commit/input"
 	log "github.com/sirupsen/logrus"
 	"os"
@@ -16,22 +17,42 @@ func GetPair(commitConfig input.CommitConfig, currentPair string, teamMembers []
 	if pairShort == "none" {
 		return input.TeamMember{Short: "none"}, nil
 	}
-	for _, tm := range teamMembers {
-		if tm.Short == pairShort {
-			pair = tm
-		}
-	}
-	if (input.TeamMember{}) == pair {
-		newMember, err := input.GetNewTeamMemberFromInput(os.Stdin)
-		if err != nil {
-			return input.TeamMember{}, err
-		}
-		err = input.WriteTeamMembersConfig(commitConfig.TeamMembersConfigPath, append(teamMembers, newMember))
+
+	pair, err = GetTeamMemberByAbbreviation(teamMembers, pairShort)
+	if err != nil && err.Error() == "not-found" {
+		newMember, err := GetAndSaveNewTeamMember(commitConfig.TeamMembersConfigPath, pairShort, teamMembers)
 		if err != nil {
 			return input.TeamMember{}, err
 		}
 		pair = newMember
+	} else if err != nil {
+		return input.TeamMember{}, err
 	}
 
 	return pair, nil
+}
+
+func GetTeamMemberByAbbreviation(tms []input.TeamMember, abbreviation string) (input.TeamMember, error) {
+	var found input.TeamMember
+	for _, tm := range tms {
+		if tm.Short == abbreviation {
+			found = tm
+		}
+	}
+	if(input.TeamMember{}) == found {
+		return input.TeamMember{}, errors.New("not-found")
+	}
+	return found, nil
+}
+
+func GetAndSaveNewTeamMember(path string, abbreviation string, tms []input.TeamMember)(input.TeamMember, error) {
+	newMember, err := input.GetNewTeamMemberFromInput(os.Stdin, abbreviation)
+	if err != nil {
+		return input.TeamMember{}, err
+	}
+	err = input.WriteTeamMembersConfig(path, append(tms, newMember))
+	if err != nil {
+		return input.TeamMember{}, err
+	}
+	return newMember, nil
 }

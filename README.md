@@ -103,8 +103,10 @@ To execute all tests, simply run: `make test`.
 - [x] add flag to skip pair
 - [x] add flag to skip long explanation
 - [x] check if there is anything to commit
+- [x] separate state from config
 - [ ] use abbreviation
-- [ ] separate state from config
+- [ ] personal infos from team-config
+- [ ] -y for yes to all git diffs and take default parameter
 
 ## License
 

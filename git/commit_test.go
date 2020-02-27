@@ -11,7 +11,7 @@ func TestBuildCommitMsg(t *testing.T) {
 		pair        input.TeamMember
 		summary     string
 		explanation string
-		short       string
+		short       input.TeamMember
 	}
 	tests := []struct {
 		name string
@@ -29,9 +29,13 @@ func TestBuildCommitMsg(t *testing.T) {
 				},
 				summary:     "I commit things",
 				explanation: "Because I can\nAnd I Like it",
-				short:       "me",
+				short:       input.TeamMember{
+					GithubUserName: "myself",
+					Email:          "me@company.com",
+					Short:          "me",
+				},
 			},
-			want: "[ABC-001] me|un I commit things\n\nBecause I can\nAnd I Like it\n\n\nCo-authored-by: pair <pair@mail.com>\n",
+			want: "[ABC-001] un|me I commit things\n\nBecause I can\nAnd I Like it\n\n\nCo-authored-by: pair <pair@mail.com>\n",
 		},
 		{
 			name: "simple commit without pair",
@@ -42,7 +46,11 @@ func TestBuildCommitMsg(t *testing.T) {
 				},
 				summary:     "I commit things",
 				explanation: "Because I can\nAnd I Like it",
-				short:       "me",
+				short:       input.TeamMember{
+					GithubUserName: "myself",
+					Email:          "me@company.com",
+					Short:          "me",
+				},
 			},
 			want: "[ABC-001] me I commit things\n\nBecause I can\nAnd I Like it\n",
 		},
