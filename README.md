@@ -75,7 +75,7 @@ And a team-members configuration file in the path specified above:
 [
     {
         "username": "another_username",
-        "mail": "user@company.com",
+        "mail": "user1@company.com",
         "short": "user1"
     },
     {
@@ -97,12 +97,11 @@ To execute all tests, simply run: `make test`.
 ## Further Todos
 - [x] save "none" as pair
 - [x] summary is mandatory
-- [ ] make `commit` a cmd-line-tool
-- [ ] add `create-commit` cmd
-- [ ] add `create-config` cmd
-- [ ] add `create-aliases` cmd
-- [ ] add travis
-- [ ] make travis check test-coverage
+- [x] make `commit` a cmd-line-tool
+- [ ] add flag to run git add -p beforehand
+- [ ] add flag to skip story
+- [ ] add flag to skip pair
+- [ ] add flag to skip long explanation
 
 ## License
 
