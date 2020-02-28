@@ -55,8 +55,8 @@ func Commit(commitMsg string) {
 	fmt.Print(output)
 }
 
-func AddP() {
-	cmd := exec.Command("git", "add", "-p")
+func Add(mode string) {
+	cmd := exec.Command("git", "add", mode)
 	cmd.Stdout = os.Stdout
 	cmd.Stdin = os.Stdin
 	cmd.Stderr = os.Stderr

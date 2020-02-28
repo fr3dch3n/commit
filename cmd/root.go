@@ -16,6 +16,7 @@ var SkipStory bool
 var SkipPair bool
 var SkipExplanation bool
 var SkipAbbreviations bool
+var GodMode bool
 
 func init() {
 	rootCmd.PersistentFlags().BoolVarP(&Verbose, "verbose", "v", false, "verbose output")
@@ -24,6 +25,7 @@ func init() {
 	rootCmd.PersistentFlags().BoolVarP(&SkipPair, "skip-pair", "p", false, "skip pair integration")
 	rootCmd.PersistentFlags().BoolVarP(&SkipExplanation, "skip-explanation", "e", false, "skip long explanation")
 	rootCmd.PersistentFlags().BoolVarP(&SkipAbbreviations, "skip-abbreviations", "n", false, "skip listing abbreviations")
+	rootCmd.PersistentFlags().BoolVarP(&GodMode, "add-all-with-defaults", "y", false, "git add all and use defaults from state")
 }
 
 var rootCmd = &cobra.Command{
@@ -85,24 +87,33 @@ func commit() {
 	utils.Check(err)
 	log.Debug(state)
 
-	if GitAddP {
-		git.AddP()
+	if GodMode {
+		git.Add(".")
+	} else if GitAddP {
+		git.Add("-p")
 	}
 
 	var pair input.TeamMember
-	if !SkipPair {
-		pair, err = git.GetPair(commitConfig, state.CurrentPair, teamMembers)
-		utils.Check(err)
-		log.Debug("Pair: " + pair.String())
-	}
 	var story string
-	if !SkipStory {
-		story, err = input.GetInputOrElse(os.Stdin, "Story", state.CurrentStory)
+	if GodMode {
+		pair, err = git.GetTeamMemberByAbbreviation(teamMembers, state.CurrentPair)
 		utils.Check(err)
-		log.Debug("Story: " + story)
+		story = state.CurrentStory
+		fmt.Printf("Using pair \"%s\" with story \"%s\".\n", pair.GithubUserName, story)
+	} else {
+		if !SkipPair {
+			pair, err = git.GetPair(commitConfig, state.CurrentPair, teamMembers)
+			utils.Check(err)
+		}
+		if !SkipStory {
+			story, err = input.GetInputOrElse(os.Stdin, "Story", state.CurrentStory)
+			utils.Check(err)
+		}
+		err = input.WriteState(homedir+"/"+StatePath, pair, story)
+		utils.Check(err)
 	}
-	err = input.WriteState(homedir+"/"+StatePath, pair, story)
-	utils.Check(err)
+	log.Debug("Pair: " + pair.String())
+	log.Debug("Story: " + story)
 
 	summary, err := input.GetNonEmptyInput(os.Stdin, "Summary of your commit")
 	utils.Check(err)

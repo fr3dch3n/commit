@@ -41,7 +41,6 @@ func ReadCommitConfig(path string) (CommitConfig, error) {
 	return config, nil
 }
 
-
 func WriteCommitConfig(path string, oldConfig CommitConfig) error {
 	newConfig := CommitConfig{
 		Abbreviation:          oldConfig.Abbreviation,
@@ -72,7 +71,7 @@ func GetFromInput(ioreader io.Reader) (CommitConfig, error) {
 
 func InitCommitConfig(path string) (CommitConfig, error) {
 	var config CommitConfig
-	fromFS, err  := ReadCommitConfig(path)
+	fromFS, err := ReadCommitConfig(path)
 	if err != nil {
 		config, err = GetFromInput(os.Stdin)
 		if err != nil {
@@ -96,5 +95,5 @@ func InitCommitConfig(path string) (CommitConfig, error) {
 		return config, nil
 
 	}
-	return config, nil
+	return fromFS, nil
 }
