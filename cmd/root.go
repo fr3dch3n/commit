@@ -17,6 +17,7 @@ var SkipPair bool
 var SkipExplanation bool
 var SkipAbbreviations bool
 var GodMode bool
+var Message string
 
 func init() {
 	rootCmd.PersistentFlags().BoolVarP(&Verbose, "verbose", "v", false, "verbose output")
@@ -26,6 +27,7 @@ func init() {
 	rootCmd.PersistentFlags().BoolVarP(&SkipExplanation, "skip-explanation", "e", false, "skip long explanation")
 	rootCmd.PersistentFlags().BoolVarP(&SkipAbbreviations, "skip-abbreviations", "n", false, "skip listing abbreviations")
 	rootCmd.PersistentFlags().BoolVarP(&GodMode, "add-all-with-defaults", "y", false, "git add all and use defaults from state")
+	rootCmd.PersistentFlags().StringVarP(&Message, "message", "m", "", "provide the commit-message")
 }
 
 var rootCmd = &cobra.Command{
@@ -115,8 +117,13 @@ func commit() {
 	log.Debug("Pair: " + pair.String())
 	log.Debug("Story: " + story)
 
-	summary, err := input.GetNonEmptyInput(os.Stdin, "Summary of your commit")
-	utils.Check(err)
+	var summary string
+	if Message == "" {
+		summary, err = input.GetNonEmptyInput(os.Stdin, "Summary of your commit")
+		utils.Check(err)
+	} else {
+		summary = Message
+	}
 	log.Debug("Summary: " + summary)
 	reviewedSummary := git.ReviewSummary(summary)
 	log.Debug("ReviewedSummary: " + reviewedSummary)
