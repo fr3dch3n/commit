@@ -95,6 +95,11 @@ func commit() {
 		git.Add("-p")
 	}
 
+	if !git.AnythingStage() {
+		fmt.Println("There are no staged files.")
+		os.Exit(0)
+	}
+
 	var pair input.TeamMember
 	var story string
 	if GodMode {

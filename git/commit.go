@@ -71,3 +71,12 @@ func AreThereChanges() bool {
 	output := string(out[:])
 	return output != ""
 }
+
+func AnythingStage() bool {
+	out, err := exec.Command("git", "diff", "--name-only", "--cached").Output()
+	if err != nil {
+		fmt.Printf("%s", err)
+	}
+	output := strings.TrimSpace(string(out[:]))
+	return output != ""
+}

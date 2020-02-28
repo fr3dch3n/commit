@@ -79,8 +79,10 @@ To execute all tests, simply run: `make test`.
 - [x] separate state from config
 - [x] use abbreviation
 - [x] personal infos from team-config
-- [ ] -y for yes to all git diffs and take default parameter
+- [x] -y for yes to all git diffs and take default parameter
 - [x] initial config setup
+- [x] -m Flag to provide a message from cmd-line
+- [x] exit if there are no staged files after git-add-phase
 
 ## License
 
