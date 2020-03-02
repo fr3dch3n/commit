@@ -5,10 +5,13 @@ import (
 	"io/ioutil"
 	"os"
 	"reflect"
+	"strconv"
 	"testing"
+	"math/rand"
 )
 
 func Test_ReadTeamMembersConfig(t *testing.T) {
+	testPathEnv := "testpath" + strconv.Itoa(rand.Intn(10000))
 	type args struct {
 		path string
 	}
@@ -21,7 +24,7 @@ func Test_ReadTeamMembersConfig(t *testing.T) {
 		{
 			name: "read simple test-config",
 			args: args{
-				path: "../test-resources/team-members-config/simple-config.json",
+				path: "$"+testPathEnv+ "/simple-config.json",
 			},
 			want: []TeamMember{
 				{
@@ -64,6 +67,7 @@ func Test_ReadTeamMembersConfig(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			_ = os.Setenv(testPathEnv, "../test-resources/team-members-config")
 			got, err := ReadTeamMembersConfig(tt.args.path)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("ReadTeamMembersConfig() error = %v, wantErr %v", err, tt.wantErr)
@@ -72,6 +76,7 @@ func Test_ReadTeamMembersConfig(t *testing.T) {
 			if !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("ReadTeamMembersConfig() got = %v, want %v", got, tt.want)
 			}
+			_ = os.Unsetenv(testPathEnv)
 		})
 	}
 }
