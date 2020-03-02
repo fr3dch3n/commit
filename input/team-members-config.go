@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"os"
 )
 
 type TeamMember struct {
@@ -17,7 +18,7 @@ func (tm TeamMember) String() string {
 }
 
 func ReadTeamMembersConfig(path string) ([]TeamMember, error) {
-	file, err := ioutil.ReadFile(path)
+	file, err := ioutil.ReadFile(os.ExpandEnv(path))
 	if err != nil {
 		return []TeamMember{}, err
 	}
@@ -34,7 +35,7 @@ func WriteTeamMembersConfig(path string, tms []TeamMember) error {
 	if err != nil {
 		return err
 	}
-	err = ioutil.WriteFile(path, b, 0644)
+	err = ioutil.WriteFile(os.ExpandEnv(path), b, 0644)
 	return err
 }
 
