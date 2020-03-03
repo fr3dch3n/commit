@@ -2,13 +2,14 @@ package cmd
 
 import (
 	"fmt"
+	"os"
+
 	"github.com/fr3dch3n/commit/git"
 	"github.com/fr3dch3n/commit/input"
 	"github.com/fr3dch3n/commit/utils"
 	log "github.com/sirupsen/logrus"
-	"os"
+	"github.com/spf13/cobra"
 )
-import "github.com/spf13/cobra"
 
 var Verbose bool
 var GitAddP bool
@@ -113,7 +114,7 @@ func commit() {
 			utils.Check(err)
 		}
 		if !SkipStory {
-			story, err = input.GetInputOrElse(os.Stdin, "Story", state.CurrentStory)
+			story, err = input.GetWithDefault("Current story", state.CurrentStory)
 			utils.Check(err)
 		}
 		err = input.WriteState(homedir+"/"+StatePath, pair, story)
@@ -124,7 +125,7 @@ func commit() {
 
 	var summary string
 	if Message == "" {
-		summary, err = input.GetNonEmptyInput(os.Stdin, "Summary of your commit")
+		summary, err = input.GetNonEmpty("Summary of your commit")
 		utils.Check(err)
 	} else {
 		summary = Message
@@ -135,7 +136,7 @@ func commit() {
 
 	var explanation string
 	if !SkipExplanation {
-		explanation, err = input.GetMultiLineInput(os.Stdin, "Why did you choose to do that? ")
+		explanation, err = input.GetMultiLineInputV2("Why did you choose to do that? ")
 		utils.Check(err)
 		log.Debug("Explanation: " + explanation)
 	}

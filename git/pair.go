@@ -9,12 +9,18 @@ import (
 
 func GetPair(commitConfig input.CommitConfig, currentPair string, teamMembers []input.TeamMember) (input.TeamMember, error) {
 	var pair input.TeamMember
-	pairAbbreviation, err := input.GetInputOrElse(os.Stdin, "Pairing with", currentPair)
+	var pairAbbreviation string
+	var err error
+	if currentPair == "none" {
+		pairAbbreviation, err = input.Get("Current pairing partner")
+	} else {
+		pairAbbreviation, err = input.GetWithDefault("Current pairing partner", currentPair)
+	}
 	if err != nil {
 		return input.TeamMember{}, err
 	}
 	log.Debug("PairAbbreviation: " + pairAbbreviation)
-	if pairAbbreviation == "none" {
+	if pairAbbreviation == "" {
 		return input.TeamMember{Abbreviation: "none"}, nil
 	}
 

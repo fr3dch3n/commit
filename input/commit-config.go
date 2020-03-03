@@ -55,11 +55,11 @@ func WriteCommitConfig(path string, oldConfig CommitConfig) error {
 }
 
 func GetFromInput(ioreader io.Reader) (CommitConfig, error) {
-	abbreviation, err := GetNonEmptyInput(ioreader, "Enter your abbreviation")
+	abbreviation, err := GetNonEmpty("Enter your abbreviation")
 	if err != nil {
 		return CommitConfig{}, err
 	}
-	teamMembersConfigPath, err := GetNonEmptyInput(ioreader, "Enter the teamMembersConfigPath")
+	teamMembersConfigPath, err := GetNonEmpty("Enter the teamMembersConfigPath")
 	if err != nil {
 		return CommitConfig{}, err
 	}

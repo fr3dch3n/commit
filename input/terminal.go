@@ -1,75 +1,96 @@
 package input
 
 import (
-	"bufio"
 	"fmt"
 	"io"
 	"strings"
+
+	"github.com/chzyer/readline"
+	"github.com/fr3dch3n/commit/utils"
+	log "github.com/sirupsen/logrus"
 )
 
-func GetInputOrElse(ioreader io.Reader, msg string, current string) (string, error) {
-	var input string
-	if current != "" {
-		reader := bufio.NewReader(ioreader)
-		fmt.Print(msg + " [" + current + "]: ")
-		input, _ = reader.ReadString('\n')
-	} else {
-		reader := bufio.NewReader(ioreader)
-		fmt.Print(msg + ": ")
-		input, _ = reader.ReadString('\n')
-	}
-	cleanInput := strings.TrimSpace(input)
-	if cleanInput != "" {
-		return cleanInput, nil
-	} else {
-		return current, nil
-	}
-}
+var rl *readline.Instance
 
-func GetNonEmptyInput(ioreader io.Reader, msg string) (string, error) {
+func init() {
 	var err error
-	var input string
-	reader := bufio.NewReader(ioreader)
-	fmt.Print(msg + ": ")
-	input, err = reader.ReadString('\n')
+	c := &readline.Config{
+		Prompt:          "\033[31m»\033[0m ",
+		InterruptPrompt: "^C",
+	}
+
+	rl, err = readline.NewEx(c)
 	if err != nil {
-		return "", err
+		panic(err)
 	}
-	cleanedInput := strings.TrimSpace(input)
-	if cleanedInput == "" {
-		return GetNonEmptyInput(ioreader, msg)
+
+} // TODO shutdown close
+func GetWithDefault(msg, defa string) (string, error) {
+	fmt.Println(msg)
+	line, err := rl.ReadlineWithDefault(defa)
+	log.Debug("Read: " + line)
+	if err == io.EOF {
+		return strings.TrimSpace(line), nil
+	} else if err != nil && err.Error() == "Interrupt" {
+		utils.Abort()
 	}
-	return cleanedInput, nil
+	return line, nil
 }
 
-func GetMultiLineInput(ioreader io.Reader, msg string) (string, error) {
-	scn := bufio.NewScanner(ioreader)
-	fmt.Print(msg)
+func Get(msg string) (string, error) {
+	fmt.Println(msg)
+	line, err := rl.Readline()
+	log.Debug("Read: " + line)
+	if err == io.EOF {
+		return strings.TrimSpace(line), nil
+	} else if err != nil && err.Error() == "Interrupt" {
+		utils.Abort()
+	}
+	return line, nil
+}
+
+func GetNonEmpty(msg string) (string, error) {
+	fmt.Println(msg)
+	line, err := rl.Readline()
+	log.Debug("Read: " + line)
+	if err == io.EOF || (err == nil && line == "") {
+		return GetNonEmpty(msg)
+	} else if err != nil && err.Error() == "Interrupt" {
+		utils.Abort()
+	}
+	return line, nil
+}
+
+func GetMultiLineInputV2(msg string) (string, error) {
 	var lines []string
-	var nrOfEnters = 0
-	for scn.Scan() {
-		line := scn.Text()
-		if len(line) == 0 {
-			nrOfEnters += 1
-			if nrOfEnters == 2 {
+	var emptyLineCounter int = 0
+	fmt.Println(msg)
+	for {
+		line, err := rl.Readline()
+		if line == "" {
+			if emptyLineCounter == 1 {
 				break
+			} else {
+				emptyLineCounter++
 			}
 		} else {
-			nrOfEnters = 0
-			lines = append(lines, line)
+			emptyLineCounter = 0
 		}
+		if err != nil {
+			panic(err)
+		}
+		lines = append(lines, line)
 	}
-
 	return strings.Join(lines, "\n"), nil
 }
 
 func GetNewTeamMemberFromInput(ioreader io.Reader, abbreviation string) (TeamMember, error) {
 	fmt.Println("Creating team-member with abbreviation " + abbreviation)
-	username, err := GetNonEmptyInput(ioreader, "Enter username")
+	username, err := GetNonEmpty("Enter username")
 	if err != nil {
 		return TeamMember{}, nil
 	}
-	mail, err := GetNonEmptyInput(ioreader, "Enter mail")
+	mail, err := GetNonEmpty("Enter mail")
 	if err != nil {
 		return TeamMember{}, nil
 	}
