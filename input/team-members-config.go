@@ -7,6 +7,7 @@ import (
 	"os"
 )
 
+// TeamMember contains all information needed to identify a single team-member.
 type TeamMember struct {
 	GithubUserName string `json:"username"`
 	Email          string `json:"mail"`
@@ -17,7 +18,7 @@ func (tm TeamMember) String() string {
 	return fmt.Sprintf("GithubUsername:%s, Email:%s, Abbreviation: %s", tm.GithubUserName, tm.Email, tm.Abbreviation)
 }
 
-func ReadTeamMembersConfig(path string) ([]TeamMember, error) {
+func readTeamMembersConfig(path string) ([]TeamMember, error) {
 	file, err := ioutil.ReadFile(os.ExpandEnv(path))
 	if err != nil {
 		return []TeamMember{}, err
@@ -30,6 +31,7 @@ func ReadTeamMembersConfig(path string) ([]TeamMember, error) {
 	return config, nil
 }
 
+// WriteTeamMembersConfig writes a list of team-members to the filesystem.
 func WriteTeamMembersConfig(path string, tms []TeamMember) error {
 	b, err := json.MarshalIndent(tms, "", "	")
 	if err != nil {
@@ -39,9 +41,11 @@ func WriteTeamMembersConfig(path string, tms []TeamMember) error {
 	return err
 }
 
+// InitTeamMembersConfig reads and parses a TeamMembersConfig.
+// If not found, it creates on.
 func InitTeamMembersConfig(path string) ([]TeamMember, error) {
 	var tms []TeamMember
-	tms, err  := ReadTeamMembersConfig(path)
+	tms, err := readTeamMembersConfig(path)
 	if err != nil {
 		tms = []TeamMember{}
 		err = WriteTeamMembersConfig(path, tms)

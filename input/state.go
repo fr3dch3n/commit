@@ -5,11 +5,15 @@ import (
 	"io/ioutil"
 )
 
+// State contains two state-parameters.
+// CurrentStory specifies the last saved story.
+// CurrentPair specifies the last saved pairing-partner.
 type State struct {
 	CurrentStory string `json:"story"`
 	CurrentPair  string `json:"pair"`
 }
 
+// ReadState reads and parses the state from the path.
 func ReadState(path string) (State, error) {
 	file, err := ioutil.ReadFile(path)
 	if err != nil {
@@ -23,6 +27,7 @@ func ReadState(path string) (State, error) {
 	return config, nil
 }
 
+// WriteState marshalls and saves the new pair and story to filesystem.
 func WriteState(path string, pair TeamMember, story string) error {
 	newState := State{
 		CurrentStory: story,

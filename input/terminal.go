@@ -24,7 +24,11 @@ func init() {
 		panic(err)
 	}
 
-} // TODO shutdown close
+}
+
+// TODO shutdown close
+
+// GetWithDefault asks for user-input and provides a default.
 func GetWithDefault(msg, defa string) (string, error) {
 	fmt.Println(msg)
 	line, err := rl.ReadlineWithDefault(defa)
@@ -37,6 +41,7 @@ func GetWithDefault(msg, defa string) (string, error) {
 	return line, nil
 }
 
+// Get asks for user-input.
 func Get(msg string) (string, error) {
 	fmt.Println(msg)
 	line, err := rl.Readline()
@@ -49,6 +54,7 @@ func Get(msg string) (string, error) {
 	return line, nil
 }
 
+// GetNonEmpty asks for user-input until the input is not empty.
 func GetNonEmpty(msg string) (string, error) {
 	fmt.Println(msg)
 	line, err := rl.Readline()
@@ -61,7 +67,8 @@ func GetNonEmpty(msg string) (string, error) {
 	return line, nil
 }
 
-func GetMultiLineInputV2(msg string) (string, error) {
+// GetMultiLineInput lets a user input many lines until two blank lines follow one another.
+func GetMultiLineInput(msg string) (string, error) {
 	var lines []string
 	var emptyLineCounter int = 0
 	fmt.Println(msg)
@@ -82,22 +89,4 @@ func GetMultiLineInputV2(msg string) (string, error) {
 		lines = append(lines, line)
 	}
 	return strings.Join(lines, "\n"), nil
-}
-
-func GetNewTeamMemberFromInput(ioreader io.Reader, abbreviation string) (TeamMember, error) {
-	fmt.Println("Creating team-member with abbreviation " + abbreviation)
-	username, err := GetNonEmpty("Enter username")
-	if err != nil {
-		return TeamMember{}, nil
-	}
-	mail, err := GetNonEmpty("Enter mail")
-	if err != nil {
-		return TeamMember{}, nil
-	}
-
-	return TeamMember{
-		GithubUserName: username,
-		Email:          mail,
-		Abbreviation:   abbreviation,
-	}, nil
 }

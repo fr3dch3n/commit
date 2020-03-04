@@ -2,13 +2,16 @@ package git
 
 import (
 	"fmt"
-	"github.com/fr3dch3n/commit/input"
-	log "github.com/sirupsen/logrus"
 	"os"
 	"os/exec"
 	"strings"
+
+	"github.com/fr3dch3n/commit/input"
+	log "github.com/sirupsen/logrus"
 )
 
+// BuildCommitMsg returns a string which is the whole commit message.
+// Parameters are all previously asked for information like pair, story, summary and explanation.
 func BuildCommitMsg(story string, pair input.TeamMember, summary string, explanation string, me input.TeamMember, skipAbbreviation bool) string {
 	log.Debug("story: " + story)
 	log.Debug("pair: " + pair.Abbreviation)
@@ -40,12 +43,14 @@ func BuildCommitMsg(story string, pair input.TeamMember, summary string, explana
 	return output
 }
 
+// ReviewSummary fixes the commit-summary by some simple rules.
 func ReviewSummary(summary string) string {
 	cleanedOfWhitespace := strings.TrimSpace(summary)
 	firstChar := string(cleanedOfWhitespace[0])
 	return strings.ToUpper(firstChar) + strings.TrimPrefix(cleanedOfWhitespace, firstChar)
 }
 
+// Commit executes git-commit with the build message.
 func Commit(commitMsg string) {
 	out, err := exec.Command("git", "commit", "-m", commitMsg).Output()
 	if err != nil {
@@ -55,6 +60,8 @@ func Commit(commitMsg string) {
 	fmt.Print(output)
 }
 
+// Add executes the git-add command with a mode.
+// A mode could be: -p or simply a dot.
 func Add(mode string) {
 	cmd := exec.Command("git", "add", mode)
 	cmd.Stdout = os.Stdout
@@ -63,6 +70,7 @@ func Add(mode string) {
 	_ = cmd.Run()
 }
 
+// AreThereChanges checks if there are local changes in the current dir.
 func AreThereChanges() bool {
 	out, err := exec.Command("git", "status", "--porcelain").Output()
 	if err != nil {
@@ -72,7 +80,8 @@ func AreThereChanges() bool {
 	return output != ""
 }
 
-func AnythingStage() bool {
+// AnythingStaged checks if there are staged changes in the current dir.
+func AnythingStaged() bool {
 	out, err := exec.Command("git", "diff", "--name-only", "--cached").Output()
 	if err != nil {
 		fmt.Printf("%s", err)

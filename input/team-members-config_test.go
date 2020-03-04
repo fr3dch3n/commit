@@ -1,13 +1,14 @@
 package input
 
 import (
-	"github.com/stretchr/testify/assert"
 	"io/ioutil"
+	"math/rand"
 	"os"
 	"reflect"
 	"strconv"
 	"testing"
-	"math/rand"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func Test_ReadTeamMembersConfig(t *testing.T) {
@@ -24,7 +25,7 @@ func Test_ReadTeamMembersConfig(t *testing.T) {
 		{
 			name: "read simple test-config",
 			args: args{
-				path: "$"+testPathEnv+ "/simple-config.json",
+				path: "$" + testPathEnv + "/simple-config.json",
 			},
 			want: []TeamMember{
 				{
@@ -68,7 +69,7 @@ func Test_ReadTeamMembersConfig(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			_ = os.Setenv(testPathEnv, "../test-resources/team-members-config")
-			got, err := ReadTeamMembersConfig(tt.args.path)
+			got, err := readTeamMembersConfig(tt.args.path)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("ReadTeamMembersConfig() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -125,7 +126,7 @@ func Test_WriteTeamMembersConfig(t *testing.T) {
 			if err := WriteTeamMembersConfig(file.Name(), tt.args.tms); (err != nil) != tt.wantErr {
 				t.Errorf("WriteTeamMembersConfig() error = %v, wantErr %v", err, tt.wantErr)
 			}
-			tms, err := ReadTeamMembersConfig(file.Name())
+			tms, err := readTeamMembersConfig(file.Name())
 			if err != nil {
 				t.Errorf("ReadTeamMembersConfig() error = %v, wantErr %v", err, tt.wantErr)
 			}

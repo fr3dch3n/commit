@@ -11,13 +11,28 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// Verbose specifies whether debug-logging should be active.
 var Verbose bool
+
+// GitAddP runs 'git add -p' beforehand.
 var GitAddP bool
+
+// SkipStory specifies whether a story is needed in the commit-message.
 var SkipStory bool
+
+// SkipPair specifies whether a paring-partner should be involved in the commit-message.
 var SkipPair bool
+
+// SkipExplanation specifies whether the long explanation in a commit-message should be skipped.
 var SkipExplanation bool
+
+// SkipAbbreviations specifies whether the collaborating abbreviations should be mentioned in the commit-message.
 var SkipAbbreviations bool
+
+// GodMode runs 'git add .' beforehand and then takes all defaults like pair and story without askings for them.GodMode
 var GodMode bool
+
+// Message is the commit-message if specified.
 var Message string
 
 func init() {
@@ -39,6 +54,7 @@ var rootCmd = &cobra.Command{
 	},
 }
 
+// Execute is the entrypoint for the whole application.
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
@@ -46,7 +62,10 @@ func Execute() {
 	}
 }
 
+// CommitConfigPath specifies the file-name for the config in the home-dir.
 const CommitConfigPath = ".commit-config"
+
+// StatePath specifies the file-name for the state-file in the home-dir.
 const StatePath = ".commit-config.state"
 
 func commit() {
@@ -96,7 +115,7 @@ func commit() {
 		git.Add("-p")
 	}
 
-	if !git.AnythingStage() {
+	if !git.AnythingStaged() {
 		fmt.Println("There are no staged files.")
 		os.Exit(0)
 	}
@@ -136,7 +155,7 @@ func commit() {
 
 	var explanation string
 	if !SkipExplanation {
-		explanation, err = input.GetMultiLineInputV2("Why did you choose to do that? ")
+		explanation, err = input.GetMultiLineInput("Why did you choose to do that? ")
 		utils.Check(err)
 		log.Debug("Explanation: " + explanation)
 	}

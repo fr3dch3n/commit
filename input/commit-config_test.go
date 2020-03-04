@@ -1,11 +1,12 @@
 package input
 
 import (
-	"github.com/stretchr/testify/assert"
 	"io/ioutil"
 	"os"
 	"reflect"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func Test_ReadCommitConfig(t *testing.T) {
@@ -56,7 +57,7 @@ func Test_ReadCommitConfig(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := ReadCommitConfig(tt.args.path)
+			got, err := readCommitConfig(tt.args.path)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("ReadCommitConfig() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -120,7 +121,7 @@ func Test_ContainsMinimalSet(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := tt.args.c.ContainsMinimalSet(); (err != nil) != tt.wantErr {
+			if err := tt.args.c.containsMinimalSet(); (err != nil) != tt.wantErr {
 				t.Errorf("ContainsMinimalSet() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
@@ -160,10 +161,10 @@ func Test_WriteCommitConfig(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			file, _ := ioutil.TempFile("", "tmp-commit-config-")
-			if err := WriteCommitConfig(file.Name(), tt.args.oldConfig); (err != nil) != tt.wantErr {
+			if err := writeCommitConfig(file.Name(), tt.args.oldConfig); (err != nil) != tt.wantErr {
 				t.Errorf("WriteCommitConfig() error = %v, wantErr %v", err, tt.wantErr)
 			}
-			config, err := ReadCommitConfig(file.Name())
+			config, err := readCommitConfig(file.Name())
 			if err != nil {
 				t.Errorf("ReadCommitConfig() error = %v, wantErr %v", err, tt.wantErr)
 			}

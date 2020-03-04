@@ -9,6 +9,9 @@ import (
 	"os"
 )
 
+// CommitConfig contains two configuration-parameters.
+// Abbreviation specifies the personal abbreviation.
+// TeamMembersConfigPath specifies the path to the team-members-configuration-file.
 type CommitConfig struct {
 	Abbreviation          string `json:"abbreviation"`
 	TeamMembersConfigPath string `json:"teamMembersConfigPath"`
@@ -18,7 +21,7 @@ func (c *CommitConfig) String() string {
 	return fmt.Sprintf("Abbreviation: %s, TeamMembersConfigPath: %s", c.Abbreviation, c.TeamMembersConfigPath)
 }
 
-func (c *CommitConfig) ContainsMinimalSet() error {
+func (c *CommitConfig) containsMinimalSet() error {
 	if c.Abbreviation == "" {
 		return errors.New("your abbreviation is not specified")
 	}
@@ -28,7 +31,7 @@ func (c *CommitConfig) ContainsMinimalSet() error {
 	return nil
 }
 
-func ReadCommitConfig(path string) (CommitConfig, error) {
+func readCommitConfig(path string) (CommitConfig, error) {
 	file, err := ioutil.ReadFile(path)
 	if err != nil {
 		return CommitConfig{}, err
@@ -41,7 +44,7 @@ func ReadCommitConfig(path string) (CommitConfig, error) {
 	return config, nil
 }
 
-func WriteCommitConfig(path string, oldConfig CommitConfig) error {
+func writeCommitConfig(path string, oldConfig CommitConfig) error {
 	newConfig := CommitConfig{
 		Abbreviation:          oldConfig.Abbreviation,
 		TeamMembersConfigPath: oldConfig.TeamMembersConfigPath,
@@ -54,7 +57,7 @@ func WriteCommitConfig(path string, oldConfig CommitConfig) error {
 	return err
 }
 
-func GetFromInput(ioreader io.Reader) (CommitConfig, error) {
+func getFromInput(ioreader io.Reader) (CommitConfig, error) {
 	abbreviation, err := GetNonEmpty("Enter your abbreviation")
 	if err != nil {
 		return CommitConfig{}, err
@@ -69,26 +72,27 @@ func GetFromInput(ioreader io.Reader) (CommitConfig, error) {
 	}, nil
 }
 
+// InitCommitConfig reads and validates the commit-configuration and returns the corresponding object or error.
 func InitCommitConfig(path string) (CommitConfig, error) {
 	var config CommitConfig
-	fromFS, err := ReadCommitConfig(path)
+	fromFS, err := readCommitConfig(path)
 	if err != nil {
-		config, err = GetFromInput(os.Stdin)
+		config, err = getFromInput(os.Stdin)
 		if err != nil {
 			return config, err
 		}
-		err = WriteCommitConfig(path, config)
+		err = writeCommitConfig(path, config)
 		if err != nil {
 			return config, err
 		}
 		return config, nil
 	}
-	if err = fromFS.ContainsMinimalSet(); err != nil {
-		config, err = GetFromInput(os.Stdin)
+	if err = fromFS.containsMinimalSet(); err != nil {
+		config, err = getFromInput(os.Stdin)
 		if err != nil {
 			return config, err
 		}
-		err = WriteCommitConfig(path, config)
+		err = writeCommitConfig(path, config)
 		if err != nil {
 			return config, err
 		}
