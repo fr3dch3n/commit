@@ -38,7 +38,7 @@ func GetWithDefault(msg, defa string) (string, error) {
 	} else if err != nil && err.Error() == "Interrupt" {
 		utils.Abort()
 	}
-	return line, nil
+	return strings.TrimSpace(line), nil
 }
 
 // Get asks for user-input.
@@ -51,7 +51,7 @@ func Get(msg string) (string, error) {
 	} else if err != nil && err.Error() == "Interrupt" {
 		utils.Abort()
 	}
-	return line, nil
+	return strings.TrimSpace(line), nil
 }
 
 // GetNonEmpty asks for user-input until the input is not empty.
@@ -64,7 +64,7 @@ func GetNonEmpty(msg string) (string, error) {
 	} else if err != nil && err.Error() == "Interrupt" {
 		utils.Abort()
 	}
-	return line, nil
+	return strings.TrimSpace(line), nil
 }
 
 // GetMultiLineInput lets a user input many lines until two blank lines follow one another.
