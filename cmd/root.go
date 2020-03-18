@@ -112,13 +112,16 @@ func commit() {
 		os.Exit(0)
 	}
 
-	var pair input.TeamMember
+	var pair []input.TeamMember
 	var story string
 	if GodMode {
-		pair, err = git.GetTeamMemberByAbbreviation(teamMembers, state.CurrentPair)
-		utils.Check(err)
+		for _, ps := range state.CurrentPair {
+			m, err := git.GetTeamMemberByAbbreviation(teamMembers, ps)
+			utils.Check(err)
+			pair = append(pair, m)
+		}
 		story = state.CurrentStory
-		fmt.Printf("Using pair \"%s\" with story \"%s\".\n", pair.GithubUserName, story)
+		fmt.Printf("Using pair \"%v\" with story \"%s\".\n", pair, story)
 	} else {
 		if !SkipPair {
 			pair, err = git.GetPair(commitConfig, state.CurrentPair, teamMembers)
@@ -131,7 +134,7 @@ func commit() {
 		err = input.WriteState(homedir+"/"+StatePath, pair, story)
 		utils.Check(err)
 	}
-	log.Debug("Pair: " + pair.String())
+	log.Debugf("Pair: %v", pair)
 	log.Debug("Story: " + story)
 
 	var summary string

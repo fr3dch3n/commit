@@ -8,12 +8,13 @@
   * [Table of Contents](#table-of-contents)
   * [Example](#example)
      * [Special usecases](#special-usecases)
+        * [Blank commit-message](#blank-commit-message)
+        * [Use defaults](#use-defaults)
   * [Commands and Flags](#commands-and-flags)
   * [Features](#features)
   * [Installation](#installation)
   * [Running the tests](#running-the-tests)
   * [Built With](#built-with)
-  * [Further Todos](#further-todos)
   * [License](#license)
 
 ## Example
@@ -21,34 +22,52 @@
 After a successful installation usage of `commit` looks like this:
 ```bash
 $ commit
-Pairing with [abc]: def
-Story [ABC-001]: ABC-002
-Summary of your commit: we do work
-Why did you choose to do that? We need to make sure that we 
-keep up the good work.
+Current pairing partner (separate by [,| ])
+» pair
+Creating team-member with abbreviation pair
+Enter username
+» pair1234
+Enter mail
+» pair@mycompany.com
+Current story
+» #999
+Summary of your commit
+» fix build-step
+Why did you choose to do that?
+» Building the package failed because ...
+»
+»
 ```
 
 This results in a commit-message like this: 
 ```
-[ABC-002] def|me We do work
+[#999] pair|fma Fix build-step
 
-We need to make sure that we 
-keep up the good work.
+Building the package failed because ...
 
-Co-authored-by: def-user <def@sample.com>
+Co-authored-by: pair1234 <pair@mycompany.com>
 ```
 
 ### Special usecases
 
-Command: `commit -neps -m "Some commit-message"`
+Some useful oneliners.
+
+#### Blank commit-message
+
+Write a blank commit-message but keep co-authored-by.
+
+Command: `commit -b -m "Some commit-message"`
 
 Commit-Message: 
 ```
 Some commit-message
 ```
 ----
+#### Use defaults
 
-Command: `commit -ey -m "yes we did it"` 
+Use pair and story from state without review.
+
+Command: `commit -y -m "yes we did it"` 
 
 Commit-Message: 
 ```
@@ -70,15 +89,13 @@ Available Commands:
   version     Print the version number of Commit
 
 Flags:
-  -y, --add-all-with-defaults   git add all and use defaults from state
-  -a, --git-add                 run git add -p beforehand
-  -h, --help                    help for commit
-  -m, --message string          provide the commit-message
-  -n, --skip-abbreviations      skip listing abbreviations
-  -e, --skip-explanation        skip long explanation
-  -p, --skip-pair               skip pair integration
-  -s, --skip-story              skip story integration
-  -v, --verbose                 verbose output
+  -b, --blank            blank
+  -y, --god-mode         git add all and use defaults from state
+  -h, --help             help for commit
+  -m, --message string   provide the commit-message
+  -a, --no-git-add       do not run git add -p beforehand
+  -p, --skip-pair        skip pair integration
+  -v, --verbose          verbose output
 
 Use "commit [command] --help" for more information about a command.
 ```
@@ -90,6 +107,7 @@ Use "commit [command] --help" for more information about a command.
 * adds new team-members on the fly
 * adds needed configuration in an initial setup
 * provides a god-mode (-y) to git-add-all and use pair/story from state without asking
+* add multiple pairing partners
 
 ## Installation
 
@@ -113,23 +131,6 @@ To execute all tests, simply run: `make test`.
 * [logrus](github.com/sirupsen/logrus) - The golang logging framework
 * [cobra](github.com/spf13/cobra) - The cmd-line library
 * [testify](github.com/stretchr/testify) - Make testing a blessing
-
-## Further Todos
-- [x] save "none" as pair
-- [x] summary is mandatory
-- [x] make `commit` a cmd-line-tool
-- [x] add flag to run git add -p beforehand
-- [x] add flag to skip story
-- [x] add flag to skip pair
-- [x] add flag to skip long explanation
-- [x] check if there is anything to commit
-- [x] separate state from config
-- [x] use abbreviation
-- [x] personal infos from team-config
-- [x] -y for yes to all git diffs and take default parameter
-- [x] initial config setup
-- [x] -m Flag to provide a message from cmd-line
-- [x] exit if there are no staged files after git-add-phase
 
 ## License
 

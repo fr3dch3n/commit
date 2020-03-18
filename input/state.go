@@ -9,8 +9,8 @@ import (
 // CurrentStory specifies the last saved story.
 // CurrentPair specifies the last saved pairing-partner.
 type State struct {
-	CurrentStory string `json:"story"`
-	CurrentPair  string `json:"pair"`
+	CurrentStory string   `json:"story"`
+	CurrentPair  []string `json:"pair"`
 }
 
 // ReadState reads and parses the state from the path.
@@ -28,10 +28,14 @@ func ReadState(path string) (State, error) {
 }
 
 // WriteState marshalls and saves the new pair and story to filesystem.
-func WriteState(path string, pair TeamMember, story string) error {
+func WriteState(path string, pair []TeamMember, story string) error {
+	var pairAbbrev []string
+	for _, p := range pair {
+		pairAbbrev = append(pairAbbrev, p.Abbreviation)
+	}
 	newState := State{
 		CurrentStory: story,
-		CurrentPair:  pair.Abbreviation,
+		CurrentPair:  pairAbbrev,
 	}
 	b, err := json.MarshalIndent(newState, "", "	")
 	if err != nil {

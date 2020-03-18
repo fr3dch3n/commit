@@ -8,7 +8,7 @@ import (
 func TestBuildCommitMsg(t *testing.T) {
 	type args struct {
 		story        string
-		pair         input.TeamMember
+		pair         []input.TeamMember
 		summary      string
 		explanation  string
 		abbreviation input.TeamMember
@@ -22,11 +22,11 @@ func TestBuildCommitMsg(t *testing.T) {
 			name: "first simple commit",
 			args: args{
 				story: "ABC-001",
-				pair: input.TeamMember{
+				pair: []input.TeamMember{{
 					GithubUserName: "pair",
 					Email:          "pair@mail.com",
 					Abbreviation:   "un",
-				},
+				}},
 				summary:     "I commit things",
 				explanation: "Because I can\nAnd I Like it",
 				abbreviation: input.TeamMember{
@@ -40,10 +40,8 @@ func TestBuildCommitMsg(t *testing.T) {
 		{
 			name: "simple commit without pair",
 			args: args{
-				story: "ABC-001",
-				pair: input.TeamMember{
-					Abbreviation: "none",
-				},
+				story:       "ABC-001",
+				pair:        []input.TeamMember{},
 				summary:     "I commit things",
 				explanation: "Because I can\nAnd I Like it",
 				abbreviation: input.TeamMember{

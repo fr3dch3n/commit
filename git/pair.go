@@ -3,41 +3,68 @@ package git
 import (
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/fr3dch3n/commit/input"
 	log "github.com/sirupsen/logrus"
 )
 
 // GetPair tries to get the current pairing-partner from the user-input.
-func GetPair(commitConfig input.CommitConfig, currentPair string, teamMembers []input.TeamMember) (input.TeamMember, error) {
-	var pair input.TeamMember
+func GetPair(commitConfig input.CommitConfig, currentPair []string, teamMembers []input.TeamMember) ([]input.TeamMember, error) {
 	var pairAbbreviation string
 	var err error
-	if currentPair == "none" {
-		pairAbbreviation, err = input.Get("Current pairing partner")
+	if len(currentPair) == 0 {
+		pairAbbreviation, err = input.Get("Current pairing partner (separate by [,| ])")
 	} else {
-		pairAbbreviation, err = input.GetWithDefault("Current pairing partner", currentPair)
+		pairAbbreviation, err = input.GetWithDefault("Current pairing partner (separate by [,| ])", strings.Join(currentPair, ","))
 	}
 	if err != nil {
-		return input.TeamMember{}, err
+		return []input.TeamMember{}, err
 	}
 	log.Debug("PairAbbreviation: " + pairAbbreviation)
-	if pairAbbreviation == "" {
-		return input.TeamMember{Abbreviation: "none"}, nil
+
+	cutAbbrevs := SeparateAbbreviation(pairAbbreviation)
+	log.Debugf("cutAbbrevs: %v", cutAbbrevs)
+
+	if len(cutAbbrevs) == 0 {
+		return []input.TeamMember{}, nil
 	}
 
-	pair, err = GetTeamMemberByAbbreviation(teamMembers, pairAbbreviation)
-	if err != nil && err.Error() == "not-found" {
-		newMember, err := GetAndSaveNewTeamMember(commitConfig.TeamMembersConfigPath, pairAbbreviation, teamMembers)
-		if err != nil {
-			return input.TeamMember{}, err
+	var pair []input.TeamMember
+	for _, abbrev := range cutAbbrevs {
+		member, err := GetTeamMemberByAbbreviation(teamMembers, abbrev)
+		if err != nil && err.Error() == "not-found" {
+			newMember, err := GetAndSaveNewTeamMember(commitConfig.TeamMembersConfigPath, abbrev, teamMembers)
+			if err != nil {
+				log.Debug("GetAndSaveNewTeamMember: ", err)
+				continue
+			}
+			pair = append(pair, newMember)
+		} else if err != nil {
+			log.Debug("GetTeamMemberByAbbreviation: ", err)
+			continue
+		} else {
+			pair = append(pair, member)
 		}
-		pair = newMember
-	} else if err != nil {
-		return input.TeamMember{}, err
 	}
-
 	return pair, nil
+}
+
+func SeparateAbbreviation(input string) []string {
+	var result []string
+	splitByComma := strings.Split(input, ",")
+	for _, x := range splitByComma {
+		splitByWhiteSpace := strings.Split(x, " ")
+		for _, y := range splitByWhiteSpace {
+			splitByPipe := strings.Split(y, "|")
+			for _, z := range splitByPipe {
+				if z != "" && len(z) > 1 {
+					result = append(result, z)
+				}
+			}
+		}
+	}
+	return result
 }
 
 // GetTeamMemberByAbbreviation makes a lookup for a team-member by the abbreviation.
