@@ -14,20 +14,14 @@ import (
 // Verbose specifies whether debug-logging should be active.
 var Verbose bool
 
-// GitAddP runs 'git add -p' beforehand.
-var GitAddP bool
-
-// SkipStory specifies whether a story is needed in the commit-message.
-var SkipStory bool
+// NoGitAddP runs 'git add -p' beforehand.
+var NoGitAddP bool
 
 // SkipPair specifies whether a paring-partner should be involved in the commit-message.
 var SkipPair bool
 
-// SkipExplanation specifies whether the long explanation in a commit-message should be skipped.
-var SkipExplanation bool
-
-// SkipAbbreviations specifies whether the collaborating abbreviations should be mentioned in the commit-message.
-var SkipAbbreviations bool
+// Blank TODO
+var Blank bool
 
 // GodMode runs 'git add .' beforehand and then takes all defaults like pair and story without askings for them.GodMode
 var GodMode bool
@@ -37,12 +31,10 @@ var Message string
 
 func init() {
 	rootCmd.PersistentFlags().BoolVarP(&Verbose, "verbose", "v", false, "verbose output")
-	rootCmd.PersistentFlags().BoolVarP(&GitAddP, "git-add", "a", false, "run git add -p beforehand")
-	rootCmd.PersistentFlags().BoolVarP(&SkipStory, "skip-story", "s", false, "skip story integration")
+	rootCmd.PersistentFlags().BoolVarP(&NoGitAddP, "no-git-add", "a", false, "do not run git add -p beforehand")
 	rootCmd.PersistentFlags().BoolVarP(&SkipPair, "skip-pair", "p", false, "skip pair integration")
-	rootCmd.PersistentFlags().BoolVarP(&SkipExplanation, "skip-explanation", "e", false, "skip long explanation")
-	rootCmd.PersistentFlags().BoolVarP(&SkipAbbreviations, "skip-abbreviations", "n", false, "skip listing abbreviations")
-	rootCmd.PersistentFlags().BoolVarP(&GodMode, "add-all-with-defaults", "y", false, "git add all and use defaults from state")
+	rootCmd.PersistentFlags().BoolVarP(&Blank, "blank", "b", false, "blank") // TODO description
+	rootCmd.PersistentFlags().BoolVarP(&GodMode, "god-mode", "y", false, "git add all and use defaults from state")
 	rootCmd.PersistentFlags().StringVarP(&Message, "message", "m", "", "provide the commit-message")
 }
 
@@ -111,7 +103,7 @@ func commit() {
 
 	if GodMode {
 		git.Add(".")
-	} else if GitAddP {
+	} else if !NoGitAddP {
 		git.Add("-p")
 	}
 
@@ -132,7 +124,7 @@ func commit() {
 			pair, err = git.GetPair(commitConfig, state.CurrentPair, teamMembers)
 			utils.Check(err)
 		}
-		if !SkipStory {
+		if !Blank {
 			story, err = input.GetWithDefault("Current story", state.CurrentStory)
 			utils.Check(err)
 		}
@@ -153,14 +145,11 @@ func commit() {
 	reviewedSummary := git.ReviewSummary(summary)
 	log.Debug("ReviewedSummary: " + reviewedSummary)
 
-	var explanation string
-	if !SkipExplanation {
-		explanation, err = input.GetMultiLineInput("Why did you choose to do that? ")
-		utils.Check(err)
-		log.Debug("Explanation: " + explanation)
-	}
+	explanation, err := input.GetMultiLineInput("Why did you choose to do that? ")
+	utils.Check(err)
+	log.Debug("Explanation: " + explanation)
 
-	commitMsg := git.BuildCommitMsg(story, pair, reviewedSummary, explanation, me, SkipAbbreviations)
+	commitMsg := git.BuildCommitMsg(story, pair, reviewedSummary, explanation, me, Blank)
 	log.Debug("CommitMsg: " + commitMsg)
 
 	git.Commit(commitMsg)

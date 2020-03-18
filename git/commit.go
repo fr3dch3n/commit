@@ -12,16 +12,16 @@ import (
 
 // BuildCommitMsg returns a string which is the whole commit message.
 // Parameters are all previously asked for information like pair, story, summary and explanation.
-func BuildCommitMsg(story string, pair input.TeamMember, summary string, explanation string, me input.TeamMember, skipAbbreviation bool) string {
+func BuildCommitMsg(story string, pair input.TeamMember, summary string, explanation string, me input.TeamMember, blank bool) string {
 	log.Debug("story: " + story)
 	log.Debug("pair: " + pair.Abbreviation)
 	var output string
 
-	if story != "" {
+	if story != "" && !blank {
 		output += fmt.Sprintf("[%s] ", story)
 	}
 
-	if !skipAbbreviation {
+	if !blank {
 		if (input.TeamMember{}) == pair || pair.Abbreviation == "none" {
 			output += fmt.Sprintf("%s ", me.Abbreviation)
 		} else {
