@@ -101,10 +101,11 @@ func commit() {
 	utils.Check(err)
 	log.Debug(state)
 
+	git.Add("-N", ".")
 	if GodMode {
-		git.Add(".")
+		git.Add(".", "")
 	} else if !NoGitAddP {
-		git.Add("-p")
+		git.Add("-p", "")
 	}
 
 	if !git.AnythingStaged() {

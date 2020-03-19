@@ -70,8 +70,13 @@ func Commit(commitMsg string) {
 
 // Add executes the git-add command with a mode.
 // A mode could be: -p or simply a dot.
-func Add(mode string) {
-	cmd := exec.Command("git", "add", mode)
+func Add(mode, extraArg string) {
+	var cmd *exec.Cmd
+	if extraArg == "" {
+		cmd = exec.Command("git", "add", mode)
+	} else {
+		cmd = exec.Command("git", "add", mode, extraArg)
+	}
 	cmd.Stdout = os.Stdout
 	cmd.Stdin = os.Stdin
 	cmd.Stderr = os.Stderr
