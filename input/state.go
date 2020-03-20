@@ -6,10 +6,11 @@ import (
 )
 
 // State contains two state-parameters.
-// CurrentStory specifies the last saved story.
-// CurrentPair specifies the last saved pairing-partner.
 type State struct {
+	// CurrentStory specifies the last saved story.
 	CurrentStory string   `json:"story"`
+
+	// CurrentPair specifies the last saved pairing-partner.
 	CurrentPair  []string `json:"pair"`
 }
 

@@ -8,10 +8,11 @@ import (
 )
 
 // CommitConfig contains two configuration-parameters.
-// Abbreviation specifies the personal abbreviation.
-// TeamMembersConfigPath specifies the path to the team-members-configuration-file.
 type CommitConfig struct {
-	Abbreviation          string `json:"abbreviation"`
+	// Abbreviation specifies the personal abbreviation.
+	Abbreviation string `json:"abbreviation"`
+
+	// TeamMembersConfigPath specifies the path to the team-members-configuration-file.
 	TeamMembersConfigPath string `json:"teamMembersConfigPath"`
 }
 
