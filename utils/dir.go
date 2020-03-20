@@ -2,6 +2,7 @@ package utils
 
 import "os"
 
+// Exists returns a boolean indicating whether the path exists.
 func Exists(path string) (bool, error) {
 	_, err := os.Stat(path)
 	if err == nil {

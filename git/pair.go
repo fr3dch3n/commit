@@ -50,6 +50,7 @@ func GetPair(commitConfig input.CommitConfig, currentPair []string, teamMembers 
 	return pair, nil
 }
 
+// SeparateAbbreviation takes a string and splits it by [,| ] and returns a list of existing strings
 func SeparateAbbreviation(input string) []string {
 	var result []string
 	splitByComma := strings.Split(input, ",")
