@@ -4,9 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
 	"io/ioutil"
-	"os"
 )
 
 // CommitConfig contains two configuration-parameters.
@@ -57,7 +55,7 @@ func writeCommitConfig(path string, oldConfig CommitConfig) error {
 	return err
 }
 
-func getFromInput(ioreader io.Reader) (CommitConfig, error) {
+func getFromInput() (CommitConfig, error) {
 	abbreviation, err := GetNonEmpty("Enter your abbreviation")
 	if err != nil {
 		return CommitConfig{}, err
@@ -77,7 +75,7 @@ func InitCommitConfig(path string) (CommitConfig, error) {
 	var config CommitConfig
 	fromFS, err := readCommitConfig(path)
 	if err != nil {
-		config, err = getFromInput(os.Stdin)
+		config, err = getFromInput()
 		if err != nil {
 			return config, err
 		}
@@ -88,7 +86,7 @@ func InitCommitConfig(path string) (CommitConfig, error) {
 		return config, nil
 	}
 	if err = fromFS.containsMinimalSet(); err != nil {
-		config, err = getFromInput(os.Stdin)
+		config, err = getFromInput()
 		if err != nil {
 			return config, err
 		}
