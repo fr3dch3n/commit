@@ -74,7 +74,7 @@ func commit() {
 	}
 
 	if !git.AreThereChanges()  && !EmptyCommit{
-		fmt.Println("No changes.")
+		fmt.Println("There are no changes to add!")
 		os.Exit(0)
 	}
 
