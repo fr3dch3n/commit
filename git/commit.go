@@ -102,3 +102,13 @@ func AnythingStaged() bool {
 	output := strings.TrimSpace(string(out[:]))
 	return output != ""
 }
+
+// Make an commit with no content
+func EmptyCommit(commitMsg string) {
+	out, err := exec.Command("git", "commit", "--allow-empty", "-m", commitMsg).Output()
+	if err != nil {
+		fmt.Printf("%s", err)
+	}
+	output := string(out[:])
+	fmt.Print(output)
+}

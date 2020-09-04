@@ -17,6 +17,9 @@ var Verbose bool
 // NoGitAddP runs 'git add -p' beforehand.
 var NoGitAddP bool
 
+// EmptyCommit makes an commit without any chanes.
+var EmptyCommit bool
+
 // SkipPair specifies whether a paring-partner should be involved in the commit-message.
 var SkipPair bool
 
@@ -31,6 +34,7 @@ var Message string
 
 func init() {
 	rootCmd.PersistentFlags().BoolVarP(&Verbose, "verbose", "v", false, "verbose output")
+	rootCmd.PersistentFlags().BoolVarP(&EmptyCommit, "empty-commit", "e", false, "make an empty commit")
 	rootCmd.PersistentFlags().BoolVarP(&NoGitAddP, "no-git-add", "a", false, "do not run git add -p beforehand")
 	rootCmd.PersistentFlags().BoolVarP(&SkipPair, "skip-pair", "p", false, "skip pair integration")
 	rootCmd.PersistentFlags().BoolVarP(&Blank, "blank", "b", false, "blank") // TODO description
@@ -69,7 +73,7 @@ func commit() {
 		panic("not in a git dir, aborting")
 	}
 
-	if !git.AreThereChanges() {
+	if !git.AreThereChanges()  && !EmptyCommit{
 		fmt.Println("No changes.")
 		os.Exit(0)
 	}
@@ -101,18 +105,20 @@ func commit() {
 	utils.Check(err)
 	log.Debug(state)
 
-	git.Add("-N", ".")
-	if GodMode {
-		git.Add(".", "")
-	} else if !NoGitAddP {
-		git.Add("-p", "")
-	}
+	if !EmptyCommit {
 
-	if !git.AnythingStaged() {
-		fmt.Println("There are no staged files.")
-		os.Exit(0)
-	}
+		git.Add("-N", ".")
+		if GodMode {
+			git.Add(".", "")
+		} else if !NoGitAddP {
+			git.Add("-p", "")
+		}
 
+		if !git.AnythingStaged() {
+			fmt.Println("There are no staged files.")
+			os.Exit(0)
+		}
+	}
 	var pair []input.TeamMember
 	var story string
 	if GodMode {
@@ -128,7 +134,7 @@ func commit() {
 			pair, err = git.GetPair(commitConfig, state.CurrentPair, teamMembers)
 			utils.Check(err)
 		}
-		if !Blank && commitConfig.StoryMode == "true"{
+		if !Blank && commitConfig.StoryMode == "true" {
 			story, err = input.GetWithDefault("Current story", state.CurrentStory)
 			utils.Check(err)
 		}
@@ -155,6 +161,9 @@ func commit() {
 
 	commitMsg := git.BuildCommitMsg(story, pair, reviewedSummary, explanation, me, Blank)
 	log.Debug("CommitMsg: " + commitMsg)
-
-	git.Commit(commitMsg)
+	if EmptyCommit {
+		git.EmptyCommit(commitMsg)
+	} else {
+		git.Commit(commitMsg)
+	}
 }
