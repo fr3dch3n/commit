@@ -12,12 +12,15 @@ type CommitConfig struct {
 	// Abbreviation specifies the personal abbreviation.
 	Abbreviation string `json:"abbreviation"`
 
+	// Story mode defines if you will be asked for the current story.
+	StoryMode string `json:"storyMode"`
+
 	// TeamMembersConfigPath specifies the path to the team-members-configuration-file.
 	TeamMembersConfigPath string `json:"teamMembersConfigPath"`
 }
 
 func (c *CommitConfig) String() string {
-	return fmt.Sprintf("Abbreviation: %s, TeamMembersConfigPath: %s", c.Abbreviation, c.TeamMembersConfigPath)
+	return fmt.Sprintf("Abbreviation: %s, StoryMode: %s, TeamMembersConfigPath: %s", c.Abbreviation, c.StoryMode, c.TeamMembersConfigPath)
 }
 
 func (c *CommitConfig) containsMinimalSet() error {
@@ -26,6 +29,9 @@ func (c *CommitConfig) containsMinimalSet() error {
 	}
 	if c.TeamMembersConfigPath == "" {
 		return errors.New("the teamMembersConfigPath is not specified")
+	}
+	if c.StoryMode == "" {
+		return errors.New("the storyMode is not specified")
 	}
 	return nil
 }
@@ -46,6 +52,7 @@ func readCommitConfig(path string) (CommitConfig, error) {
 func writeCommitConfig(path string, oldConfig CommitConfig) error {
 	newConfig := CommitConfig{
 		Abbreviation:          oldConfig.Abbreviation,
+		StoryMode:             oldConfig.StoryMode,
 		TeamMembersConfigPath: oldConfig.TeamMembersConfigPath,
 	}
 	b, err := json.MarshalIndent(newConfig, "", "	")
@@ -65,8 +72,20 @@ func getFromInput() (CommitConfig, error) {
 	if err != nil {
 		return CommitConfig{}, err
 	}
+	storyMode, err := GetNonEmpty("Do you work with stories? [yes|no]")
+	if err != nil {
+		return CommitConfig{}, err
+	}
+	var storyModeBool = ""
+	if storyMode == "yes" {
+		storyModeBool = "true"
+	} else {
+		storyModeBool = "false"
+	}
+
 	return CommitConfig{
 		Abbreviation:          abbreviation,
+		StoryMode:             storyModeBool,
 		TeamMembersConfigPath: teamMembersConfigPath,
 	}, nil
 }

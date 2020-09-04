@@ -128,7 +128,7 @@ func commit() {
 			pair, err = git.GetPair(commitConfig, state.CurrentPair, teamMembers)
 			utils.Check(err)
 		}
-		if !Blank {
+		if !Blank && commitConfig.StoryMode == "true"{
 			story, err = input.GetWithDefault("Current story", state.CurrentStory)
 			utils.Check(err)
 		}

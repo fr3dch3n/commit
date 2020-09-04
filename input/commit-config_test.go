@@ -26,6 +26,7 @@ func Test_ReadCommitConfig(t *testing.T) {
 			},
 			want: CommitConfig{
 				TeamMembersConfigPath: "path",
+				StoryMode: "false",
 				Abbreviation:          "abc",
 			},
 			wantErr: false,
@@ -113,6 +114,7 @@ func Test_ContainsMinimalSet(t *testing.T) {
 			args: args{
 				c: CommitConfig{
 					Abbreviation:          "me",
+					StoryMode:          "true",
 					TeamMembersConfigPath: "/some/path",
 				},
 			},
