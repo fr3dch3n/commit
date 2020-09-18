@@ -7,7 +7,8 @@ import (
 
 func TestBuildCommitMsg(t *testing.T) {
 	type args struct {
-		story        string
+		ctype        string
+		scope        string
 		pair         []input.TeamMember
 		summary      string
 		explanation  string
@@ -21,13 +22,14 @@ func TestBuildCommitMsg(t *testing.T) {
 		{
 			name: "first simple commit",
 			args: args{
-				story: "ABC-001",
+				ctype: "fix",
+				scope: "tf",
 				pair: []input.TeamMember{{
 					GithubUserName: "pair",
 					Email:          "pair@mail.com",
 					Abbreviation:   "un",
 				}},
-				summary:     "I commit things",
+				summary:     "i commit things",
 				explanation: "Because I can\nAnd I Like it",
 				abbreviation: input.TeamMember{
 					GithubUserName: "myself",
@@ -35,14 +37,15 @@ func TestBuildCommitMsg(t *testing.T) {
 					Abbreviation:   "me",
 				},
 			},
-			want: "[ABC-001] un|me I commit things\n\nBecause I can\nAnd I Like it\n\n\nCo-authored-by: pair <pair@mail.com>\n",
+			want: "fix(tf): i commit things\n\nBecause I can\nAnd I Like it\n\n\nCo-authored-by: pair <pair@mail.com>\n",
 		},
 		{
 			name: "simple commit without pair",
 			args: args{
-				story:       "ABC-001",
+				ctype:       "feat",
+				scope:       "ABC-001",
 				pair:        []input.TeamMember{},
-				summary:     "I commit things",
+				summary:     "i commit things",
 				explanation: "Because I can\nAnd I Like it",
 				abbreviation: input.TeamMember{
 					GithubUserName: "myself",
@@ -50,12 +53,12 @@ func TestBuildCommitMsg(t *testing.T) {
 					Abbreviation:   "me",
 				},
 			},
-			want: "[ABC-001] me I commit things\n\nBecause I can\nAnd I Like it\n",
+			want: "feat(ABC-001): i commit things\n\nBecause I can\nAnd I Like it\n",
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := BuildCommitMsg(tt.args.story, tt.args.pair, tt.args.summary, tt.args.explanation, tt.args.abbreviation, false); got != tt.want {
+			if got := BuildCommitMsg(tt.args.ctype, tt.args.scope, tt.args.pair, tt.args.summary, tt.args.explanation, tt.args.abbreviation); got != tt.want {
 				t.Errorf("BuildCommitMsg() = %v, want %v", got, tt.want)
 			}
 		})
@@ -72,25 +75,18 @@ func TestReviewSummary(t *testing.T) {
 		want string
 	}{
 		{
-			name: "make first char capital",
-			args: args{
-				summary: "word",
-			},
-			want: "Word",
-		},
-		{
 			name: "remove whitespace",
 			args: args{
 				summary: " word ",
 			},
-			want: "Word",
+			want: "word",
 		},
 		{
 			name: "multiple words are fine",
 			args: args{
 				summary: " a few words ",
 			},
-			want: "A few words",
+			want: "a few words",
 		},
 	}
 	for _, tt := range tests {

@@ -14,31 +14,19 @@ import (
 // Verbose specifies whether debug-logging should be active.
 var Verbose bool
 
-// NoGitAddP runs 'git add -p' beforehand.
-var NoGitAddP bool
+// SkipGitAdd runs 'git add -p' beforehand.
+var SkipGitAdd bool
 
 // EmptyCommit makes an commit without any chanes.
 var EmptyCommit bool
-
-// SkipPair specifies whether a paring-partner should be involved in the commit-message.
-var SkipPair bool
-
-// Blank TODO
-var Blank bool
-
-// GodMode runs 'git add .' beforehand and then takes all defaults like pair and story without askings for them.GodMode
-var GodMode bool
 
 // Message is the commit-message if specified.
 var Message string
 
 func init() {
 	rootCmd.PersistentFlags().BoolVarP(&Verbose, "verbose", "v", false, "verbose output")
+	rootCmd.PersistentFlags().BoolVarP(&SkipGitAdd, "skip-git-add", "s", false, "do not run git add -p beforehand")
 	rootCmd.PersistentFlags().BoolVarP(&EmptyCommit, "empty-commit", "e", false, "make an empty commit")
-	rootCmd.PersistentFlags().BoolVarP(&NoGitAddP, "no-git-add", "a", false, "do not run git add -p beforehand")
-	rootCmd.PersistentFlags().BoolVarP(&SkipPair, "skip-pair", "p", false, "skip pair integration")
-	rootCmd.PersistentFlags().BoolVarP(&Blank, "blank", "b", false, "blank") // TODO description
-	rootCmd.PersistentFlags().BoolVarP(&GodMode, "god-mode", "y", false, "git add all and use defaults from state")
 	rootCmd.PersistentFlags().StringVarP(&Message, "message", "m", "", "provide the commit-message")
 }
 
@@ -106,43 +94,30 @@ func commit() {
 	log.Debug(state)
 
 	if !EmptyCommit {
-
-		git.Add("-N", ".")
-		if GodMode {
-			git.Add(".", "")
-		} else if !NoGitAddP {
+		if !SkipGitAdd {
 			git.Add("-p", "")
 		}
-
 		if !git.AnythingStaged() {
 			fmt.Println("There are no staged files.")
 			os.Exit(0)
 		}
 	}
 	var pair []input.TeamMember
-	var story string
-	if GodMode {
-		for _, ps := range state.CurrentPair {
-			m, err := git.GetTeamMemberByAbbreviation(teamMembers, ps)
-			utils.Check(err)
-			pair = append(pair, m)
-		}
-		story = state.CurrentStory
-		fmt.Printf("Using pair \"%v\" with story \"%s\".\n", pair, story)
-	} else {
-		if !SkipPair {
-			pair, err = git.GetPair(commitConfig, state.CurrentPair, teamMembers)
-			utils.Check(err)
-		}
-		if !Blank && commitConfig.StoryMode == "true" {
-			story, err = input.GetWithDefault("Current story", state.CurrentStory)
-			utils.Check(err)
-		}
-		err = input.WriteState(homedir+"/"+StatePath, pair, story)
-		utils.Check(err)
-	}
+	var scope string
+
+	pair, err = git.GetPair(commitConfig, state.CurrentPair, teamMembers)
+	utils.Check(err)
+
+	ctype, err := input.GetCommitType(false)
+	utils.Check(err)
+
+	scope, err = input.GetWithDefault("Current scope", state.CurrentScope)
+	utils.Check(err)
+
+	err = input.WriteState(homedir+"/"+StatePath, pair, scope)
+	utils.Check(err)
 	log.Debugf("Pair: %v", pair)
-	log.Debug("Story: " + story)
+	log.Debug("Story: " + scope)
 
 	var summary string
 	if Message == "" {
@@ -151,6 +126,7 @@ func commit() {
 	} else {
 		summary = Message
 	}
+
 	log.Debug("Summary: " + summary)
 	reviewedSummary := git.ReviewSummary(summary)
 	log.Debug("ReviewedSummary: " + reviewedSummary)
@@ -159,7 +135,7 @@ func commit() {
 	utils.Check(err)
 	log.Debug("Explanation: " + explanation)
 
-	commitMsg := git.BuildCommitMsg(story, pair, reviewedSummary, explanation, me, Blank)
+	commitMsg := git.BuildCommitMsg(ctype, scope, pair, reviewedSummary, explanation, me)
 	log.Debug("CommitMsg: " + commitMsg)
 	if EmptyCommit {
 		git.EmptyCommit(commitMsg)

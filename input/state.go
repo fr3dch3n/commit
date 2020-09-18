@@ -7,8 +7,8 @@ import (
 
 // State contains two state-parameters.
 type State struct {
-	// CurrentStory specifies the last saved story.
-	CurrentStory string   `json:"story"`
+	// CurrentScope specifies the last saved story.
+	CurrentScope string `json:"story"`
 
 	// CurrentPair specifies the last saved pairing-partner.
 	CurrentPair  []string `json:"pair"`
@@ -35,7 +35,7 @@ func WriteState(path string, pair []TeamMember, story string) error {
 		pairAbbrev = append(pairAbbrev, p.Abbreviation)
 	}
 	newState := State{
-		CurrentStory: story,
+		CurrentScope: story,
 		CurrentPair:  pairAbbrev,
 	}
 	b, err := json.MarshalIndent(newState, "", "	")

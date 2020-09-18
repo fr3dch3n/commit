@@ -11,30 +11,20 @@ import (
 )
 
 // BuildCommitMsg returns a string which is the whole commit message.
-// Parameters are all previously asked for information like pair, story, summary and explanation.
-func BuildCommitMsg(story string, pair []input.TeamMember, summary string, explanation string, me input.TeamMember, blank bool) string {
-	log.Debug("story: " + story)
+// Parameters are all previously asked for information like pair, scope, summary and explanation.
+func BuildCommitMsg(ctype, scope string, pair []input.TeamMember, summary string, explanation string, me input.TeamMember) string {
+	log.Debug("scope: " + scope)
 	log.Debugf("pair: %v", pair)
 	var output string
 
-	if story != "" && !blank {
-		output += fmt.Sprintf("[%s] ", story)
+	if ctype != "" {
+		output += fmt.Sprintf("%s", ctype)
+	}
+	if scope != "" {
+		output += fmt.Sprintf("(%s)", scope)
 	}
 
-	if !blank {
-		if len(pair) == 0 {
-			output += fmt.Sprintf("%s ", me.Abbreviation)
-		} else {
-			var pairstring = ""
-			for _, p := range pair {
-				pairstring += fmt.Sprintf("%s|", p.Abbreviation)
-			}
-			output += fmt.Sprintf("%s%s ", pairstring, me.Abbreviation)
-
-		}
-	}
-
-	output += fmt.Sprintf("%s\n", summary)
+	output += fmt.Sprintf(": %s\n", summary)
 
 	if strings.TrimSpace(explanation) != "" {
 		output += fmt.Sprintf("\n%s\n", explanation)
@@ -54,8 +44,7 @@ func BuildCommitMsg(story string, pair []input.TeamMember, summary string, expla
 // ReviewSummary fixes the commit-summary by some simple rules.
 func ReviewSummary(summary string) string {
 	cleanedOfWhitespace := strings.TrimSpace(summary)
-	firstChar := string(cleanedOfWhitespace[0])
-	return strings.ToUpper(firstChar) + strings.TrimPrefix(cleanedOfWhitespace, firstChar)
+	return cleanedOfWhitespace
 }
 
 // Commit executes git-commit with the build message.

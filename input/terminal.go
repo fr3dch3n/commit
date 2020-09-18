@@ -67,6 +67,46 @@ func GetNonEmpty(msg string) (string, error) {
 	return strings.TrimSpace(line), nil
 }
 
+func stringInSlice(a string, list []string) bool {
+	for _, b := range list {
+		if b == a {
+			return true
+		}
+	}
+	return false
+}
+
+func GetCommitType(printHelp bool) (string, error) {
+	help := `Allowed commit types are:
+fix:		this commit patches a bug
+feat:		this commit introduces a new feature
+build:		this commit affects the build system
+chore:		this commit changes tools or other things that do not go into production at all (grunt tasks)
+ci:		this commit changes the CI configuration files and scripts
+docs:		this commit changes documentation
+style:		this commit does not affect meaning of code (white-space, formatting, missing semi-colons, etc)
+refactor:	this commit neither fixes a bug nor adds a feature
+revert:		this commit reverts a preceded commit
+perf:		this commit improves performance
+test:		this commit adds missing tests or corrects existing tests
+Note: For a breaking change append a ! after the type/scope.`
+
+	if printHelp {
+		fmt.Println(help)
+	}
+	fmt.Println("Commit type")
+	allowedValues := []string{"fix", "feat", "build", "chore", "ci", "docs", "style", "refactor", "perf", "test", "fix!", "feat!", "build!", "chore!", "ci!", "docs!", "style!", "perf!", "test!"}
+
+	line, err := rl.Readline()
+	log.Debug("Read: " + line)
+	if err != nil && err.Error() == "Interrupt" {
+		utils.Abort()
+	} else if err == io.EOF || (err == nil && line == "") || !stringInSlice(line, allowedValues) {
+		return GetCommitType(true)
+	}
+	return strings.TrimSpace(line), nil
+}
+
 // GetMultiLineInput lets a user input many lines until two blank lines follow one another.
 func GetMultiLineInput(msg string) (string, error) {
 	var lines []string
