@@ -9,14 +9,23 @@ binary="commit"
 run: build ## Build and run binary without arguments
 	./$(binary)
 
-build: ## Build binary
-	go build -ldflags "-s -w" -o $(binary)
+build-linux-amd64: ## Build binary
+	env GOOS=linux GOARCH=amd64 go build -ldflags "-s -w" -o $(binary)-linux-amd64
+
+build-darwin-amd64: ## Build binary
+	env GOOS=darwin GOARCH=amd64 go build -ldflags "-s -w" -o $(binary)-darwin-amd64
+
+build-windows-amd64: ## Build binary
+	env GOOS=windows GOARCH=amd64 go build -ldflags "-s -w" -o $(binary)-windows-amd64
 
 debug-build: ## Build binary
 	go build -o $(binary)
 
 test: ## Run tests
 	go test ./...
+
+dependencies:
+	go get ./...
 
 cover: ## Run test-coverage and open in browser
 	go test -v -covermode=count -coverprofile=coverage.out ./... && go tool cover -html=coverage.out

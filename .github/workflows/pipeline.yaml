@@ -1,0 +1,43 @@
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  all:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Set up Go
+        uses: actions/setup-go@v2
+      - name: download dependencies
+        run: make dependencies
+      - name: testing
+        run: make test
+      - name: build linux
+        run: make build-linux-amd64
+      - name: build darwin
+        run: make build-darwin-amd64
+      - name: build windows
+        run: make build-windows-amd64
+      - name: determine tag
+        id: release-id
+        run: echo "::set-output name=tag::$(git rev-parse --short HEAD)"
+      - name: Create Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.release-id.outputs.tag }}
+          release_name: Release ${{ steps.release-id.outputs.tag }}
+          draft: false
+          prerelease: false
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: commit-*
+          tag: ${{ steps.release-id.outputs.tag }}
+          overwrite: true
+          file_glob: true

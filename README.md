@@ -110,7 +110,12 @@ Use "commit [command] --help" for more information about a command.
 * add multiple pairing partners
 
 ## Installation
-
+### use github release
+1. Select the binary from `Releases` according to your platform.
+1. Rename it to `commit`.
+1. Make it executable.
+1. Put it in your path.
+### build from scratch
 To use `commit` you simply have to build it and put the binary on your path:
 
 ```bash
