@@ -5,41 +5,8 @@ import (
 	"os"
 	"os/exec"
 	"strings"
-
-	"github.com/fr3dch3n/commit/input"
-	log "github.com/sirupsen/logrus"
 )
 
-// BuildCommitMsg returns a string which is the whole commit message.
-// Parameters are all previously asked for information like pair, scope, summary and explanation.
-func BuildCommitMsg(ctype, scope string, pair []input.TeamMember, summary string, explanation string, me input.TeamMember) string {
-	log.Debug("scope: " + scope)
-	log.Debugf("pair: %v", pair)
-	var output string
-
-	if ctype != "" {
-		output += fmt.Sprintf("%s", ctype)
-	}
-	if scope != "" {
-		output += fmt.Sprintf("(%s)", scope)
-	}
-
-	output += fmt.Sprintf(": %s\n", summary)
-
-	if strings.TrimSpace(explanation) != "" {
-		output += fmt.Sprintf("\n%s\n", explanation)
-	}
-
-	if len(pair) != 0 {
-		output += fmt.Sprintf("\n\n")
-		for _, p := range pair {
-			coAuthoredBy := fmt.Sprintf("Co-authored-by: %s <%s>\n", p.GithubUserName, p.Email)
-			output += fmt.Sprintf("%s", coAuthoredBy)
-		}
-	}
-
-	return output
-}
 
 // ReviewSummary fixes the commit-summary by some simple rules.
 func ReviewSummary(summary string) string {

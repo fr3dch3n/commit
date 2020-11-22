@@ -9,29 +9,23 @@ import (
 
 // CommitConfig contains two configuration-parameters.
 type CommitConfig struct {
-	// Abbreviation specifies the personal abbreviation.
-	Abbreviation string `json:"abbreviation"`
-
 	// Story mode defines if you will be asked for the current story.
-	StoryMode string `json:"storyMode"`
+	CommitStyle string `json:"commitStyle"`
 
 	// TeamMembersConfigPath specifies the path to the team-members-configuration-file.
 	TeamMembersConfigPath string `json:"teamMembersConfigPath"`
 }
 
 func (c *CommitConfig) String() string {
-	return fmt.Sprintf("Abbreviation: %s, StoryMode: %s, TeamMembersConfigPath: %s", c.Abbreviation, c.StoryMode, c.TeamMembersConfigPath)
+	return fmt.Sprintf("CommitStyle: %s, TeamMembersConfigPath: %s", c.CommitStyle, c.TeamMembersConfigPath)
 }
 
 func (c *CommitConfig) containsMinimalSet() error {
-	if c.Abbreviation == "" {
-		return errors.New("your abbreviation is not specified")
-	}
 	if c.TeamMembersConfigPath == "" {
 		return errors.New("the teamMembersConfigPath is not specified")
 	}
-	if c.StoryMode == "" {
-		return errors.New("the storyMode is not specified")
+	if c.CommitStyle == "" {
+		return errors.New("the commitStyle is not specified")
 	}
 	return nil
 }
@@ -51,8 +45,7 @@ func readCommitConfig(path string) (CommitConfig, error) {
 
 func writeCommitConfig(path string, oldConfig CommitConfig) error {
 	newConfig := CommitConfig{
-		Abbreviation:          oldConfig.Abbreviation,
-		StoryMode:             oldConfig.StoryMode,
+		CommitStyle:           oldConfig.CommitStyle,
 		TeamMembersConfigPath: oldConfig.TeamMembersConfigPath,
 	}
 	b, err := json.MarshalIndent(newConfig, "", "	")
@@ -64,28 +57,23 @@ func writeCommitConfig(path string, oldConfig CommitConfig) error {
 }
 
 func getFromInput() (CommitConfig, error) {
-	abbreviation, err := GetNonEmpty("Enter your abbreviation")
-	if err != nil {
-		return CommitConfig{}, err
-	}
 	teamMembersConfigPath, err := GetNonEmpty("Enter the teamMembersConfigPath")
 	if err != nil {
 		return CommitConfig{}, err
 	}
-	storyMode, err := GetNonEmpty("Do you work with stories? [yes|no]")
+	storyMode, err := GetNonEmpty("Do you want to work with conventional-commits or jira-style? [conventional|jira]")
 	if err != nil {
 		return CommitConfig{}, err
 	}
 	var storyModeBool = ""
-	if storyMode == "yes" {
-		storyModeBool = "true"
+	if storyMode == "conventional" {
+		storyModeBool = "conventional"
 	} else {
-		storyModeBool = "false"
+		storyModeBool = "jira"
 	}
 
 	return CommitConfig{
-		Abbreviation:          abbreviation,
-		StoryMode:             storyModeBool,
+		CommitStyle:           storyModeBool,
 		TeamMembersConfigPath: teamMembersConfigPath,
 	}, nil
 }

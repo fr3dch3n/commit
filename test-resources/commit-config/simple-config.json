@@ -1,5 +1,4 @@
 {
-  "abbreviation": "abc",
-  "storyMode": "false",
+  "commitStyle": "conventional",
   "teamMembersConfigPath": "path"
 }

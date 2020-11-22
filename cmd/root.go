@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/fr3dch3n/commit/styles"
 	"os"
 
 	"github.com/fr3dch3n/commit/git"
@@ -20,14 +21,10 @@ var SkipGitAdd bool
 // EmptyCommit makes an commit without any chanes.
 var EmptyCommit bool
 
-// Message is the commit-message if specified.
-var Message string
-
 func init() {
 	rootCmd.PersistentFlags().BoolVarP(&Verbose, "verbose", "v", false, "verbose output")
 	rootCmd.PersistentFlags().BoolVarP(&SkipGitAdd, "skip-git-add", "s", false, "do not run git add -p beforehand")
 	rootCmd.PersistentFlags().BoolVarP(&EmptyCommit, "empty-commit", "e", false, "make an empty commit")
-	rootCmd.PersistentFlags().StringVarP(&Message, "message", "m", "", "provide the commit-message")
 }
 
 var rootCmd = &cobra.Command{
@@ -61,7 +58,7 @@ func commit() {
 		panic("not in a git dir, aborting")
 	}
 
-	if !git.AreThereChanges()  && !EmptyCommit{
+	if !git.AreThereChanges() && !EmptyCommit {
 		fmt.Println("There are no changes to add!")
 		os.Exit(0)
 	}
@@ -76,18 +73,6 @@ func commit() {
 	teamMembers, err := input.InitTeamMembersConfig(commitConfig.TeamMembersConfigPath)
 	utils.Check(err)
 	log.Debug(teamMembers)
-
-	var me input.TeamMember
-	me, err = git.GetTeamMemberByAbbreviation(teamMembers, commitConfig.Abbreviation)
-	if err != nil && err.Error() == "not-found" {
-		newMember, err := git.GetAndSaveNewTeamMember(commitConfig.TeamMembersConfigPath, commitConfig.Abbreviation, teamMembers)
-		if err != nil {
-			panic(err)
-		}
-		me = newMember
-	} else if err != nil {
-		panic(err)
-	}
 
 	state, err := input.ReadState(homedir + "/" + StatePath)
 	utils.Check(err)
@@ -108,38 +93,50 @@ func commit() {
 	pair, err = git.GetPair(commitConfig, state.CurrentPair, teamMembers)
 	utils.Check(err)
 
-	ctype, err := input.GetCommitType(false)
-	utils.Check(err)
 
-	scope, err = input.GetWithDefault("Current scope", state.CurrentScope)
-	utils.Check(err)
+	var commitMsg string
+
+	if commitConfig.CommitStyle == "conventional" {
+		cci := styles.GatherConventionalCommitInformation(state)
+		scope = cci.Scope
+
+		summary, err := input.GetNonEmpty("Summary of your commit")
+		utils.Check(err)
+		log.Debug("Summary: " + summary)
+
+		reviewedSummary := git.ReviewSummary(summary)
+		log.Debug("ReviewedSummary: " + reviewedSummary)
+
+		explanation, err := input.GetMultiLineInput("Why did you choose to do that? ")
+		utils.Check(err)
+		log.Debug("Explanation: " + explanation)
+
+		commitMsg = styles.BuildConventionalCommitMsg(cci, pair, reviewedSummary, explanation)
+	} else {
+		cci := styles.GatherStoryStyleInformation(state)
+		scope = cci.Story
+		summary, err := input.GetNonEmpty("Summary of your commit")
+		utils.Check(err)
+		log.Debug("Summary: " + summary)
+
+		reviewedSummary := git.ReviewSummary(summary)
+		log.Debug("ReviewedSummary: " + reviewedSummary)
+
+		explanation, err := input.GetMultiLineInput("Why did you choose to do that? ")
+		utils.Check(err)
+		log.Debug("Explanation: " + explanation)
+
+		commitMsg = styles.BuildStoryStyleCommitMsg(cci, pair, reviewedSummary, explanation)
+	}
 
 	err = input.WriteState(homedir+"/"+StatePath, pair, scope)
 	utils.Check(err)
-	log.Debugf("Pair: %v", pair)
-	log.Debug("Story: " + scope)
 
-	var summary string
-	if Message == "" {
-		summary, err = input.GetNonEmpty("Summary of your commit")
-		utils.Check(err)
-	} else {
-		summary = Message
-	}
-
-	log.Debug("Summary: " + summary)
-	reviewedSummary := git.ReviewSummary(summary)
-	log.Debug("ReviewedSummary: " + reviewedSummary)
-
-	explanation, err := input.GetMultiLineInput("Why did you choose to do that? ")
-	utils.Check(err)
-	log.Debug("Explanation: " + explanation)
-
-	commitMsg := git.BuildCommitMsg(ctype, scope, pair, reviewedSummary, explanation, me)
 	log.Debug("CommitMsg: " + commitMsg)
 	if EmptyCommit {
 		git.EmptyCommit(commitMsg)
 	} else {
 		git.Commit(commitMsg)
 	}
+
 }

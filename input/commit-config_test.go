@@ -26,8 +26,7 @@ func Test_ReadCommitConfig(t *testing.T) {
 			},
 			want: CommitConfig{
 				TeamMembersConfigPath: "path",
-				StoryMode: "false",
-				Abbreviation:          "abc",
+				CommitStyle:           "conventional",
 			},
 			wantErr: false,
 		},
@@ -83,7 +82,6 @@ func Test_ContainsMinimalSet(t *testing.T) {
 			name: "empty config",
 			args: args{
 				c: CommitConfig{
-					Abbreviation:          "",
 					TeamMembersConfigPath: "",
 				},
 			},
@@ -93,7 +91,6 @@ func Test_ContainsMinimalSet(t *testing.T) {
 			name: "only abbreviation is missing",
 			args: args{
 				c: CommitConfig{
-					Abbreviation:          "",
 					TeamMembersConfigPath: "/some/path",
 				},
 			},
@@ -103,7 +100,6 @@ func Test_ContainsMinimalSet(t *testing.T) {
 			name: "only config-path is missing",
 			args: args{
 				c: CommitConfig{
-					Abbreviation:          "me",
 					TeamMembersConfigPath: "",
 				},
 			},
@@ -113,8 +109,7 @@ func Test_ContainsMinimalSet(t *testing.T) {
 			name: "full config",
 			args: args{
 				c: CommitConfig{
-					Abbreviation:          "me",
-					StoryMode:          "true",
+					CommitStyle:           "conventional",
 					TeamMembersConfigPath: "/some/path",
 				},
 			},
@@ -153,7 +148,6 @@ func Test_WriteCommitConfig(t *testing.T) {
 				},
 				story: "TR-410",
 				oldConfig: CommitConfig{
-					Abbreviation:          "me",
 					TeamMembersConfigPath: "test-resources/commit-config/no-longer-existent-config.json",
 				},
 			},
@@ -170,7 +164,6 @@ func Test_WriteCommitConfig(t *testing.T) {
 			if err != nil {
 				t.Errorf("ReadCommitConfig() error = %v, wantErr %v", err, tt.wantErr)
 			}
-			assert.Equal(t, tt.args.oldConfig.Abbreviation, config.Abbreviation)
 			assert.Equal(t, tt.args.oldConfig.TeamMembersConfigPath, config.TeamMembersConfigPath)
 			_ = os.Remove(file.Name())
 		})

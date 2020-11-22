@@ -6,31 +6,73 @@
 
 ## Table of Contents
   * [Table of Contents](#table-of-contents)
-  * [Example](#example)
+  * [Usage](#usage)
+     * [Conventional Commits](#conventional-commits)
+     * [Story Commits](#story-commits)
      * [Special usecases](#special-usecases)
-        * [Blank commit-message](#blank-commit-message)
-        * [Use defaults](#use-defaults)
+        * [Make an empty commit (a.k.a. git commit --allow-empty)](#make-an-empty-commit-aka-git-commit---allow-empty)
+        * [Skip "git add -p"](#skip-git-add--p)
   * [Commands and Flags](#commands-and-flags)
   * [Features](#features)
   * [Installation](#installation)
+     * [use github release](#use-github-release)
+     * [build from scratch](#build-from-scratch)
   * [Running the tests](#running-the-tests)
   * [Built With](#built-with)
   * [License](#license)
 
-## Example
 
-After a successful installation usage of `commit` looks like this:
+## Usage
+
+There are two types of supported commit-styles: `conventional-commits` and `story-commits`.
+
+### Conventional Commits
+
 ```bash
 $ commit
+# runs `git add -p`
 Current pairing partner (separate by [,| ])
 » pair
-Creating team-member with abbreviation pair
+Creating team-member with abbreviation pair (This part is skipped once the pair is known.)
 Enter username
 » pair1234
 Enter mail
 » pair@mycompany.com
-Current story
-» #999
+Commit type
+» fix
+Current Scope
+» actions
+Summary of your commit
+» fix build-step by providing ...
+Why did you choose to do that?
+» Building the package failed because ...
+»
+»
+```
+
+This results in a commit-message like this: 
+```
+fix(actions): fix build-step by providing ...
+
+Building the package failed because ...
+
+Co-authored-by: pair1234 <pair@mycompany.com>
+```
+
+### Story Commits
+
+```bash
+$ commit
+# runs `git add -p`
+Current pairing partner (separate by [,| ])
+» pair
+Creating team-member with abbreviation pair (This part is skipped once the pair is known.)
+Enter username
+» pair1234
+Enter mail
+» pair@mycompany.com
+Current Story
+» CI-999
 Summary of your commit
 » fix build-step
 Why did you choose to do that?
@@ -41,7 +83,7 @@ Why did you choose to do that?
 
 This results in a commit-message like this: 
 ```
-[#999] pair|fma Fix build-step
+[CI-999] fix build-step
 
 Building the package failed because ...
 
@@ -50,31 +92,15 @@ Co-authored-by: pair1234 <pair@mycompany.com>
 
 ### Special usecases
 
-Some useful oneliners.
+Some useful flags.
 
-#### Blank commit-message
+#### Make an empty commit (a.k.a. git commit --allow-empty)
 
-Write a blank commit-message but keep co-authored-by.
+To make a commit without any changes (an empty commit), use `commit -e`.
 
-Command: `commit -b -m "Some commit-message"`
+#### Skip "git add -p"
 
-Commit-Message: 
-```
-Some commit-message
-```
-----
-#### Use defaults
-
-Use pair and story from state without review.
-
-Command: `commit -y -m "yes we did it"` 
-
-Commit-Message: 
-```
-[last-story] pair|me Yes we did it
-
-Co-authored-by: pair <pair@company.com>
-```
+To skip the `git add -p` that runs at start, simply use `commit -s`.
 
 ## Commands and Flags
 ```bash
@@ -89,13 +115,10 @@ Available Commands:
   version     Print the version number of Commit
 
 Flags:
-  -b, --blank            blank
-  -y, --god-mode         git add all and use defaults from state
-  -h, --help             help for commit
-  -m, --message string   provide the commit-message
-  -a, --no-git-add       do not run git add -p beforehand
-  -p, --skip-pair        skip pair integration
-  -v, --verbose          verbose output
+  -e, --empty-commit   make an empty commit
+  -h, --help           help for commit
+  -s, --skip-git-add   do not run git add -p beforehand
+  -v, --verbose        verbose output
 
 Use "commit [command] --help" for more information about a command.
 ```
@@ -103,10 +126,8 @@ Use "commit [command] --help" for more information about a command.
 ## Features
 `commit...`
 * uses a state file to save last pair and last story you commited to
-* fixes some things in the summary-message (e.g. start with capital letter)
 * adds new team-members on the fly
-* adds needed configuration in an initial setup
-* provides a god-mode (-y) to git-add-all and use pair/story from state without asking
+* adds the necessary configuration in an initial setup
 * add multiple pairing partners
 
 ## Installation
@@ -121,7 +142,7 @@ To use `commit` you simply have to build it and put the binary on your path:
 ```bash
 git clone https://github.com/fr3dch3n/commit
 cd commit
-make build
+make debug-build
 ln -s $(pwd)/commit $HOME/bin/commit  # e.g.
 ```
 
@@ -135,6 +156,7 @@ To execute all tests, simply run: `make test`.
 
 * [logrus](github.com/sirupsen/logrus) - The golang logging framework
 * [cobra](github.com/spf13/cobra) - The cmd-line library
+* [readline](https://github.com/chzyer/readline) - Lib to read from command-line
 * [testify](github.com/stretchr/testify) - Make testing a blessing
 
 ## License
