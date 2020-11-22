@@ -11,7 +11,7 @@ func init() {
 }
 
 // Version of this tool
-const Version = "v0.0.1"
+const Version = "v1.0.0"
 
 var versionCmd = &cobra.Command{
 	Use:   "version",

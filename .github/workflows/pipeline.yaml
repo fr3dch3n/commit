@@ -23,7 +23,7 @@ jobs:
         run: make build-windows-amd64
       - name: determine tag
         id: release-id
-        run: echo "::set-output name=tag::$(git rev-parse --short HEAD)"
+        run: echo "::set-output name=tag::$(cat VERSION)"
       - name: Create Release
         uses: actions/create-release@v1
         env:
